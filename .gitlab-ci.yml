@@ -13,6 +13,7 @@ build_job:
   script:
     - '& "$env:NUGET_PATH" restore'
     - '& "$env:MSBUILD_PATH" /p:Configuration=Release /clp:ErrorsOnly'
+    - '& "$env:MSBUILD_PATH" QuoteService.sln /p:Configuration=Release'
   artifacts:
     expire_in: 2 days
     paths:
