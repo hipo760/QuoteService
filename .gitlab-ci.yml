@@ -1,5 +1,5 @@
 variables:
-  NUGET_PATH: 'C:\Tools\Nuget\nuget.exe'
+  NUGET_PATH: 'C:\Tools\nuget.exe'
   MSBUILD_PATH: 'C:\MSBuildTools\MSBuild\Current\bin\msbuild.exe'
   
 stages:
