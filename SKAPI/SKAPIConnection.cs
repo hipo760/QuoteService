@@ -184,7 +184,7 @@ namespace SKAPI
             });
         
         public async Task<bool> Reconnect()
-            => await Task.Run(async () =>
+            => await Task.Run(() =>
             {
                 _logger.Debug("[SKAPIConnection.Reconnect()] ReConnecting....");
                 ReleaseSKCOMObject();

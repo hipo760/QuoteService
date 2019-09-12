@@ -4,6 +4,7 @@ variables:
   
 stages:
   - build
+  - deploy
 
 build_job:
   stage: build
@@ -12,3 +13,16 @@ build_job:
   script:
     - '& "$env:NUGET_PATH" restore'
     - '& "$env:MSBUILD_PATH" /p:Configuration=Release /clp:ErrorsOnly'
+  artifacts:
+    expire_in: 2 days
+    paths:
+      - '.\QuoteService\bin\Release\'
+
+deploy_job:
+  stage: deploy
+  only:
+    - branches
+  script:
+    - 'xcopy /y /s ".\QuoteService\bin\Release\*.*" "C:\QuoteService\bin"'
+  dependencies:
+    - build_job
