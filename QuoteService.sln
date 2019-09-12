@@ -5,17 +5,22 @@ VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService", "QuoteService\QuoteService.csproj", "{422AB4C9-18BD-4C63-BA19-6B51C52DE870}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteData", "QuoteData\QuoteData.csproj", "{26E0F9E4-0C8F-43A4-94CA-BF84809F1C1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuoteData", "QuoteData\QuoteData.csproj", "{26E0F9E4-0C8F-43A4-94CA-BF84809F1C1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Queue", "Queue\Queue.csproj", "{7706874D-99D4-454A-8705-B25548EFD3D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Queue", "Queue\Queue.csproj", "{7706874D-99D4-454A-8705-B25548EFD3D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quote", "Quote\Quote.csproj", "{C3FF0E4E-B2D4-4618-9F5D-7365ECBE3B6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quote", "Quote\Quote.csproj", "{C3FF0E4E-B2D4-4618-9F5D-7365ECBE3B6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCMAPI", "FCMAPI\FCMAPI.csproj", "{F449CD8A-5968-48E4-AF66-56806814BF0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FCMAPI", "FCMAPI\FCMAPI.csproj", "{F449CD8A-5968-48E4-AF66-56806814BF0D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SKAPI", "SKAPI\SKAPI.csproj", "{7218EAA0-86EB-4557-A492-F68DE674B0C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GCPPubSub", "GCPPubSub\GCPPubSub.csproj", "{D211D951-F4A9-4EB9-853C-F23DD047418A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GCPPubSub", "GCPPubSub\GCPPubSub.csproj", "{D211D951-F4A9-4EB9-853C-F23DD047418A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A5C7FF35-D640-4F2D-875F-FF3ADE0484AD}"
+	ProjectSection(SolutionItems) = preProject
+		.gitlab-ci.yml = .gitlab-ci.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
