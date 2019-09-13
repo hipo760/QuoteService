@@ -24,5 +24,6 @@ deploy_job:
     - branches
   script:
     - 'xcopy /y /s ".\QuoteService\bin\Release\*.*" "C:\QuoteService\bin"'
+    - 'gsutil cp gs://sk_quote_lib/appsettings.json C:/QuoteService/bin/'
   dependencies:
     - build_job
