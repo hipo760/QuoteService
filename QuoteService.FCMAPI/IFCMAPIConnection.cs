@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using QuoteData;
+using QuoteService.QuoteData;
 
-namespace FCMAPI
+namespace QuoteService.FCMAPI
 {
     /// <summary>
     /// Futures Commission Merchant Quote API.
@@ -17,7 +17,7 @@ namespace FCMAPI
         Task Disconnect();
 
         // Quote Action
-        List<Quote> QuotesList { get; }
+        List<Quote.Quote> QuotesList { get; }
         Task<bool> AddQuote(string exchange, string symbol);
         Task<bool> CloseQuote(string exchange, string symbol);
         Task<bool> RemoveQuote(string exchange, string symbol);

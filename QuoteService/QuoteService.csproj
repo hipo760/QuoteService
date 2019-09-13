@@ -176,9 +176,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FCMAPI\FCMAPI.csproj">
-      <Project>{F449CD8A-5968-48E4-AF66-56806814BF0D}</Project>
-      <Name>FCMAPI</Name>
+    <ProjectReference Include="..\QuoteService.FCMAPI\QuoteService.FCMAPI.csproj">
+      <Project>{c068b274-2f8e-450c-a075-ab629b51d6b1}</Project>
+      <Name>QuoteService.FCMAPI</Name>
     </ProjectReference>
     <ProjectReference Include="..\SKAPI\SKAPI.csproj">
       <Project>{7218EAA0-86EB-4557-A492-F68DE674B0C1}</Project>

@@ -2,7 +2,7 @@
 using System.IO;
 using Google.Protobuf;
 
-namespace QuoteData
+namespace QuoteService.QuoteData
 {
     public static class ExtensionMethods
     {

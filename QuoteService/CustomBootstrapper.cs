@@ -1,10 +1,10 @@
 ﻿using System;
 using Autofac;
-using FCMAPI;
 using Microsoft.Extensions.Configuration;
 using Nancy;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Configuration;
+using QuoteService.FCMAPI;
 using Serilog;
 using Serilog.Events;
 using SKAPI;

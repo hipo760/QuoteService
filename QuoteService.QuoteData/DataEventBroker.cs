@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Subjects;
 
-namespace QuoteData
+namespace QuoteService.QuoteData
 {
     public class DataEventBroker<T> : IObservable<T>
     {

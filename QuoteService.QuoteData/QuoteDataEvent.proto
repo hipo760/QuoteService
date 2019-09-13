@@ -1,8 +1,8 @@
 syntax = "proto3";
-package QuoteDataService.QuoteData;
+package QuoteService.QuoteData;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
-option csharp_namespace = "QuoteData";
+option csharp_namespace = "QuoteService.QuoteData";
 
 message OHLC{
     google.protobuf.FloatValue Open = 1;

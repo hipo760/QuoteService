@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Autofac;
-using FCMAPI;
 using Microsoft.Extensions.Configuration;
 using Nancy.Bootstrappers.Autofac;
 using Polly;

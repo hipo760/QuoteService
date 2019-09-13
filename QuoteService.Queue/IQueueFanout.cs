@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Queue
+namespace QuoteService.Queue
 {
     public interface IQueueFanout:IDisposable
     {

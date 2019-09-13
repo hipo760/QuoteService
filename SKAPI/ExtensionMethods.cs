@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using FCMAPI;
 using Polly;
+using QuoteService.FCMAPI;
 using Serilog;
 
 namespace SKAPI

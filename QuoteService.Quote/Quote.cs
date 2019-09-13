@@ -5,10 +5,11 @@ using System.Reactive.Subjects;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
-using Queue;
+using QuoteService.Queue;
+using QuoteService.QuoteData;
 using Serilog;
 
-namespace QuoteData
+namespace QuoteService.Quote
 {
     public class QuoteInfo
     {

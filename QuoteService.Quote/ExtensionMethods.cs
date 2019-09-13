@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reactive.Linq;
 
-namespace QuoteData
+namespace QuoteService.Quote
 {
     public static class ExtensionMethods
     {

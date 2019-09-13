@@ -1,4 +1,4 @@
-﻿namespace FCMAPI
+﻿namespace QuoteService.FCMAPI
 {
     public enum ConnectionStatus
     {

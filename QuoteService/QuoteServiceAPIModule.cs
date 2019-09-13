@@ -1,5 +1,5 @@
-﻿using FCMAPI;
-using Nancy;
+﻿using Nancy;
+using QuoteService.FCMAPI;
 
 namespace QuoteService
 {
