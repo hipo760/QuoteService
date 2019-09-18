@@ -17,7 +17,7 @@ namespace QuoteService.FCMAPI
         Task Disconnect();
 
         // Quote Action
-        List<Quote.Quote> QuotesList { get; }
+        List<string> QuotesList { get; }
         Task<bool> AddQuote(string exchange, string symbol);
         Task<bool> CloseQuote(string exchange, string symbol);
         Task<bool> RemoveQuote(string exchange, string symbol);

@@ -84,6 +84,10 @@
       <Project>{c068b274-2f8e-450c-a075-ab629b51d6b1}</Project>
       <Name>QuoteService.FCMAPI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QuoteService.Queue\QuoteService.Queue.csproj">
+      <Project>{B2FC3DE2-753B-4381-A9A5-A582607B7627}</Project>
+      <Name>QuoteService.Queue</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QuoteService.QuoteData\QuoteService.QuoteData.csproj">
       <Project>{ecf482f1-4901-4293-aa53-8763b3214c03}</Project>
       <Name>QuoteService.QuoteData</Name>
@@ -94,6 +98,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

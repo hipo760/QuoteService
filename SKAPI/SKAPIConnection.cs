@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using QuoteService.FCMAPI;
 using Google.Protobuf.WellKnownTypes;
 using Polly;
+using QuoteService.Queue;
 using QuoteService.Quote;
 using QuoteService.QuoteData;
 using Serilog;
@@ -24,17 +25,19 @@ namespace SKAPI
         SKReplyLib _skReply;
         SKQuoteLib _skQuotes;
         internal SKAPISetting _apiSetting;
+        internal GCPPubSubSetting _queueSetting;
         internal int _loginCode = -1;
 
         protected Dictionary<short, (short pageNo, Quote quote)> _quoteDict;
         protected ConnectionStatus _skStatus;
         //protected DataEventBroker<MessageEvent> _messagEventBroker;
 
-        public SKAPIConnection(ILogger logger, SKAPISetting apiSetting)
+        public SKAPIConnection(ILogger logger, SKAPISetting apiSetting, GCPPubSubSetting queueSetting)
         {
             _logger = logger;
             //_messagEventBroker = messageEventBroker;
             _apiSetting = apiSetting;
+            _queueSetting = queueSetting;
             _logger.Debug("[SKAPIConnection()] Begin of constructor...");
             _quoteDict = new Dictionary<short, (short pageNo, Quote quote)>();
             InitSKCOMLib();
@@ -167,7 +170,7 @@ namespace SKAPI
 
         #region Implementation of IFCMAPIConnection
 
-        public List<Quote> QuotesList => _quoteDict.Values.ToList().Select(t=>t.quote).ToList();
+        public List<string> QuotesList => _quoteDict.Values.ToList().Select(t=>t.quote.Name).ToList();
         public ConnectionStatus APIStatus => _skStatus;
 
         public async Task<bool> Connect()
@@ -227,7 +230,7 @@ namespace SKAPI
                     ApiSource = "Capital",
                     Exchange = exchange,
                     Symbol = symbol
-                },_logger))
+                },_logger, _queueSetting))
                 );
 
                 switch (exchange)
@@ -280,9 +283,5 @@ namespace SKAPI
             _quoteDict.Clear();
         });
         #endregion
-
-        
-
-
     }
 }

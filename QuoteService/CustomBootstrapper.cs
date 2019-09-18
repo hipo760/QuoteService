@@ -5,6 +5,7 @@ using Nancy;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Configuration;
 using QuoteService.FCMAPI;
+using QuoteService.Queue;
 using Serilog;
 using Serilog.Events;
 using SKAPI;
@@ -39,12 +40,18 @@ namespace QuoteService
             existingContainer.Configure<SKAPISetting>(existingContainer.Resolve<IConfiguration>().GetSection("SKAPISetting"));
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register SKAPI configuration...done.");
 
+            // Register GCPPubSubSetting
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register GCPPubSub configuration...");
+            existingContainer.Configure<GCPPubSubSetting>(existingContainer.Resolve<IConfiguration>().GetSection("GCPPubSubSetting"));
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register GCPPubSub configuration...done.");
+
             // Register IFCMAPIConnection
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register Futures Commission Merchant (FCM) API ...");
             
             existingContainer.Update(builder => builder.RegisterInstance(new SKAPIConnection(
                 existingContainer.Resolve<ILogger>(),
-                existingContainer.Resolve<SKAPISetting>()
+                existingContainer.Resolve<SKAPISetting>(),
+                existingContainer.Resolve<GCPPubSubSetting>()
             )).As<IFCMAPIConnection>());
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register Futures Commission Merchant (FCM) API ...done.");
         }

@@ -16,26 +16,37 @@ namespace QuoteService.Quote
         public string ApiSource { get; set; }
         public string Exchange { get; set; }
         public string Symbol { get; set; }
-        
     }
     public class Quote : IDisposable
     {
         public QuoteInfo QuoteInfo { get; set; }
-        public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromMinutes(30);
 
+        public string Name => QuoteInfo.Exchange + "." + QuoteInfo.Symbol;
+        public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromSeconds(1);
         public DataEventBroker<Tick> DataBroker { get; set; }
-        public IQueueFanout QueueConn { get; set; }
+        //public QueueConnectionClient QueueConn { get; set; }
         public OHLC LastOHLC { get; set; }
+
         private ILogger _logger;
-        public Quote(QuoteInfo quoteInfo,ILogger logger)
+        private QueueConnectionClient _queueFanout;
+
+        public Quote(QuoteInfo quoteInfo,ILogger logger,GCPPubSubSetting setting)
         {
             QuoteInfo = quoteInfo;
             _logger = logger;
+            _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...", QuoteInfo.Symbol);
+            _queueFanout  = new QueueConnectionClient(new GCPPubSubService(setting.ProjectID,_logger));
+            _queueFanout.FanoutConn.InitTopic(Name).Wait();
+            _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...done", QuoteInfo.Symbol);
             InitTickBroker();
         }
 
-        static OHLC Accumulate(OHLC state, float price, int volume, DateTime dt)
+        static OHLC Accumulate(OHLC state, Tick tick)
         {
+            var price = tick.DealPrice;
+            var volume = tick.DealQty;
+            // var dt = tick.LocalTime.ToDateTime();
+            var dt = tick.LocalTime;
             // Take the current values & apply the price update.    
             state.Open = state.Open ?? price;
             state.High = state.High.HasValue ? state.High > price ? state.High : price : price;
@@ -43,7 +54,9 @@ namespace QuoteService.Quote
             state.Close = price;
             state.Volume += volume;
             state.TicksCount += 1;
-            state.LocalTime = Timestamp.FromDateTime(dt.ToUniversalTime());
+            state.TicksArr.Add(tick);
+            //state.LocalTime = Timestamp.FromDateTime(dt.ToUniversalTime());
+            state.LocalTime = dt;
             return state;
         }
         Task Publish(OHLC ohlc)
@@ -52,8 +65,9 @@ namespace QuoteService.Quote
             {
                 LastOHLC = ohlc;
                 //LastOHLC.LogOHLC();
-                LastOHLC.ToString();
-                Console.WriteLine(LastOHLC.SerializeToString_PB());
+                var ohlcstr = LastOHLC.SerializeToString_PB();
+                //Console.WriteLine(ohlcstr);
+                _queueFanout.FanoutConn.Send(ohlcstr);
                 //QueueConn?.Send(LastOHLC.SerializeToString_PB());
             });
         }
@@ -62,17 +76,22 @@ namespace QuoteService.Quote
         {
             _logger.Debug("[Quote.InitTickBroker()] {symbol}",QuoteInfo.Symbol);
             DataBroker = new DataEventBroker<Tick>();
+            //DataBroker
+            //    .WindowByTimestamp(x => x.LocalTime.ToDateTime().Ticks, OHLCInterval)
+            //    .SelectMany(window => window.Aggregate(new OHLC(),
+            //        (state, tick) => Accumulate(state, tick.DealPrice, tick.DealQty, tick.LocalTime.ToDateTime())))
+            //    .Subscribe(async ohlc => await Publish(ohlc));
             DataBroker
                 .WindowByTimestamp(x => x.LocalTime.ToDateTime().Ticks, OHLCInterval)
                 .SelectMany(window => window.Aggregate(new OHLC(),
-                    (state, tick) => Accumulate(state, tick.DealPrice, tick.DealQty, tick.LocalTime.ToDateTime())))
+                    (state, tick) => Accumulate(state, tick)))
                 .Subscribe(async ohlc => await Publish(ohlc));
         }
 
         public void Dispose()
         {
             DataBroker.Close();
-            QueueConn.Dispose();
+            _queueFanout.Dispose();
         }
     }
 }
