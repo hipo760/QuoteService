@@ -172,7 +172,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <Content Include="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
   </ItemGroup>
@@ -180,6 +180,10 @@
     <ProjectReference Include="..\QuoteService.FCMAPI\QuoteService.FCMAPI.csproj">
       <Project>{c068b274-2f8e-450c-a075-ab629b51d6b1}</Project>
       <Name>QuoteService.FCMAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuoteService.Queue\QuoteService.Queue.csproj">
+      <Project>{B2FC3DE2-753B-4381-A9A5-A582607B7627}</Project>
+      <Name>QuoteService.Queue</Name>
     </ProjectReference>
     <ProjectReference Include="..\SKAPI\SKAPI.csproj">
       <Project>{7218EAA0-86EB-4557-A492-F68DE674B0C1}</Project>

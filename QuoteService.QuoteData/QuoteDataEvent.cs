@@ -24,21 +24,38 @@ namespace QuoteService.QuoteData {
     static QuoteDataEventReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChRRdW90ZURhdGFFdmVudC5wcm90bxIaUXVvdGVEYXRhU2VydmljZS5RdW90",
-            "ZURhdGEaH2dvb2dsZS9wcm90b2J1Zi90aW1lc3RhbXAucHJvdG8aHmdvb2ds",
-            "ZS9wcm90b2J1Zi93cmFwcGVycy5wcm90byLoAQoET0hMQxIpCgRPcGVuGAEg",
-            "ASgLMhsuZ29vZ2xlLnByb3RvYnVmLkZsb2F0VmFsdWUSKQoESGlnaBgCIAEo",
-            "CzIbLmdvb2dsZS5wcm90b2J1Zi5GbG9hdFZhbHVlEigKA0xvdxgDIAEoCzIb",
-            "Lmdvb2dsZS5wcm90b2J1Zi5GbG9hdFZhbHVlEg0KBUNsb3NlGAQgASgCEg4K",
-            "BlZvbHVtZRgFIAEoBRISCgpUaWNrc0NvdW50GAYgASgFEi0KCUxvY2FsVGlt",
-            "ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiWQoEVGljaxIP",
-            "CgdEZWFsUXR5GAEgASgFEhEKCURlYWxQcmljZRgCIAEoAhItCglMb2NhbFRp",
-            "bWUYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wQh2qAhpRdW90",
-            "ZURhdGFTZXJ2aWNlLlF1b3RlRGF0YWIGcHJvdG8z"));
+            "ChRRdW90ZURhdGFFdmVudC5wcm90bxIWUXVvdGVTZXJ2aWNlLlF1b3RlRGF0",
+            "YRofZ29vZ2xlL3Byb3RvYnVmL3RpbWVzdGFtcC5wcm90bxoeZ29vZ2xlL3By",
+            "b3RvYnVmL3dyYXBwZXJzLnByb3RvIpgCCgRPSExDEikKBE9wZW4YASABKAsy",
+            "Gy5nb29nbGUucHJvdG9idWYuRmxvYXRWYWx1ZRIpCgRIaWdoGAIgASgLMhsu",
+            "Z29vZ2xlLnByb3RvYnVmLkZsb2F0VmFsdWUSKAoDTG93GAMgASgLMhsuZ29v",
+            "Z2xlLnByb3RvYnVmLkZsb2F0VmFsdWUSDQoFQ2xvc2UYBCABKAISDgoGVm9s",
+            "dW1lGAUgASgFEhIKClRpY2tzQ291bnQYBiABKAUSLQoJTG9jYWxUaW1lGAcg",
+            "ASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCghUaWNrc0FychgI",
+            "IAMoCzIcLlF1b3RlU2VydmljZS5RdW90ZURhdGEuVGljayJrCgZDZW50ZXIS",
+            "FgoOQXJpdGhtZXRpY01lYW4YASABKAISFQoNR2VvbWV0cmljTWVhbhgCIAEo",
+            "AhIUCgxIYXJtb25pY01lYW4YAyABKAISDgoGTWVkaWFuGAQgASgCEgwKBE1v",
+            "ZGUYBSABKAIiggEKCkRpc3BlcnNpb24SEAoIVmFyaWFuY2UYASABKAISGQoR",
+            "U3RhbmRhcmREZXZpYXRpb24YAiABKAISHAoUQ29lZmZpY2llbnRWYXJpYXRp",
+            "b24YAyABKAISDQoFUmFuZ2UYBCABKAISGgoSSW50ZXJxdWFydGlsZVJhbmdl",
+            "GAUgASgCIkQKDFNoYXBlTW9tZW50cxIQCghTa2V3bmVzcxgBIAEoAhIQCghL",
+            "dXJ0b3NpcxgCIAEoAhIQCghMTW9tZW50cxgDIAEoAiLqAQoVRGVzY3JpcHRp",
+            "dmVTdGF0aXN0aWNzEi0KCUxvY2FsVGltZRgBIAEoCzIaLmdvb2dsZS5wcm90",
+            "b2J1Zi5UaW1lc3RhbXASLgoGQ2VudGVyGAIgASgLMh4uUXVvdGVTZXJ2aWNl",
+            "LlF1b3RlRGF0YS5DZW50ZXISNgoKRGlzcGVyc2lvbhgDIAEoCzIiLlF1b3Rl",
+            "U2VydmljZS5RdW90ZURhdGEuRGlzcGVyc2lvbhI6CgxTaGFwZU1vbWVudHMY",
+            "BCABKAsyJC5RdW90ZVNlcnZpY2UuUXVvdGVEYXRhLlNoYXBlTW9tZW50cyJZ",
+            "CgRUaWNrEg8KB0RlYWxRdHkYASABKAUSEQoJRGVhbFByaWNlGAIgASgCEi0K",
+            "CUxvY2FsVGltZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBC",
+            "GaoCFlF1b3RlU2VydmljZS5RdW90ZURhdGFiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::QuoteService.QuoteData.OHLC), global::QuoteService.QuoteData.OHLC.Parser, new[]{ "Open", "High", "Low", "Close", "Volume", "TicksCount", "LocalTime" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::QuoteService.QuoteData.OHLC), global::QuoteService.QuoteData.OHLC.Parser, new[]{ "Open", "High", "Low", "Close", "Volume", "TicksCount", "LocalTime", "TicksArr" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::QuoteService.QuoteData.Center), global::QuoteService.QuoteData.Center.Parser, new[]{ "ArithmeticMean", "GeometricMean", "HarmonicMean", "Median", "Mode" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::QuoteService.QuoteData.Dispersion), global::QuoteService.QuoteData.Dispersion.Parser, new[]{ "Variance", "StandardDeviation", "CoefficientVariation", "Range", "InterquartileRange" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::QuoteService.QuoteData.ShapeMoments), global::QuoteService.QuoteData.ShapeMoments.Parser, new[]{ "Skewness", "Kurtosis", "LMoments" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::QuoteService.QuoteData.DescriptiveStatistics), global::QuoteService.QuoteData.DescriptiveStatistics.Parser, new[]{ "LocalTime", "Center", "Dispersion", "ShapeMoments" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::QuoteService.QuoteData.Tick), global::QuoteService.QuoteData.Tick.Parser, new[]{ "DealQty", "DealPrice", "LocalTime" }, null, null, null, null)
           }));
     }
@@ -78,6 +95,7 @@ namespace QuoteService.QuoteData {
       volume_ = other.volume_;
       ticksCount_ = other.ticksCount_;
       localTime_ = other.localTime_ != null ? other.localTime_.Clone() : null;
+      ticksArr_ = other.ticksArr_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -169,6 +187,16 @@ namespace QuoteService.QuoteData {
       }
     }
 
+    /// <summary>Field number for the "TicksArr" field.</summary>
+    public const int TicksArrFieldNumber = 8;
+    private static readonly pb::FieldCodec<global::QuoteService.QuoteData.Tick> _repeated_ticksArr_codec
+        = pb::FieldCodec.ForMessage(66, global::QuoteService.QuoteData.Tick.Parser);
+    private readonly pbc::RepeatedField<global::QuoteService.QuoteData.Tick> ticksArr_ = new pbc::RepeatedField<global::QuoteService.QuoteData.Tick>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::QuoteService.QuoteData.Tick> TicksArr {
+      get { return ticksArr_; }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as OHLC);
@@ -189,6 +217,7 @@ namespace QuoteService.QuoteData {
       if (Volume != other.Volume) return false;
       if (TicksCount != other.TicksCount) return false;
       if (!object.Equals(LocalTime, other.LocalTime)) return false;
+      if(!ticksArr_.Equals(other.ticksArr_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -202,6 +231,7 @@ namespace QuoteService.QuoteData {
       if (Volume != 0) hash ^= Volume.GetHashCode();
       if (TicksCount != 0) hash ^= TicksCount.GetHashCode();
       if (localTime_ != null) hash ^= LocalTime.GetHashCode();
+      hash ^= ticksArr_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -240,6 +270,7 @@ namespace QuoteService.QuoteData {
         output.WriteRawTag(58);
         output.WriteMessage(LocalTime);
       }
+      ticksArr_.WriteTo(output, _repeated_ticksArr_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -269,6 +300,7 @@ namespace QuoteService.QuoteData {
       if (localTime_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(LocalTime);
       }
+      size += ticksArr_.CalculateSize(_repeated_ticksArr_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -310,6 +342,7 @@ namespace QuoteService.QuoteData {
         }
         LocalTime.MergeFrom(other.LocalTime);
       }
+      ticksArr_.Add(other.ticksArr_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -361,6 +394,914 @@ namespace QuoteService.QuoteData {
             input.ReadMessage(LocalTime);
             break;
           }
+          case 66: {
+            ticksArr_.AddEntriesFrom(input, _repeated_ticksArr_codec);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class Center : pb::IMessage<Center> {
+    private static readonly pb::MessageParser<Center> _parser = new pb::MessageParser<Center>(() => new Center());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<Center> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::QuoteService.QuoteData.QuoteDataEventReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Center() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Center(Center other) : this() {
+      arithmeticMean_ = other.arithmeticMean_;
+      geometricMean_ = other.geometricMean_;
+      harmonicMean_ = other.harmonicMean_;
+      median_ = other.median_;
+      mode_ = other.mode_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Center Clone() {
+      return new Center(this);
+    }
+
+    /// <summary>Field number for the "ArithmeticMean" field.</summary>
+    public const int ArithmeticMeanFieldNumber = 1;
+    private float arithmeticMean_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float ArithmeticMean {
+      get { return arithmeticMean_; }
+      set {
+        arithmeticMean_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "GeometricMean" field.</summary>
+    public const int GeometricMeanFieldNumber = 2;
+    private float geometricMean_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float GeometricMean {
+      get { return geometricMean_; }
+      set {
+        geometricMean_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "HarmonicMean" field.</summary>
+    public const int HarmonicMeanFieldNumber = 3;
+    private float harmonicMean_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float HarmonicMean {
+      get { return harmonicMean_; }
+      set {
+        harmonicMean_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "Median" field.</summary>
+    public const int MedianFieldNumber = 4;
+    private float median_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Median {
+      get { return median_; }
+      set {
+        median_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "Mode" field.</summary>
+    public const int ModeFieldNumber = 5;
+    private float mode_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Mode {
+      get { return mode_; }
+      set {
+        mode_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as Center);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(Center other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ArithmeticMean, other.ArithmeticMean)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(GeometricMean, other.GeometricMean)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(HarmonicMean, other.HarmonicMean)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Median, other.Median)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Mode, other.Mode)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (ArithmeticMean != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ArithmeticMean);
+      if (GeometricMean != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(GeometricMean);
+      if (HarmonicMean != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(HarmonicMean);
+      if (Median != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Median);
+      if (Mode != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Mode);
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (ArithmeticMean != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(ArithmeticMean);
+      }
+      if (GeometricMean != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(GeometricMean);
+      }
+      if (HarmonicMean != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(HarmonicMean);
+      }
+      if (Median != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(Median);
+      }
+      if (Mode != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(Mode);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (ArithmeticMean != 0F) {
+        size += 1 + 4;
+      }
+      if (GeometricMean != 0F) {
+        size += 1 + 4;
+      }
+      if (HarmonicMean != 0F) {
+        size += 1 + 4;
+      }
+      if (Median != 0F) {
+        size += 1 + 4;
+      }
+      if (Mode != 0F) {
+        size += 1 + 4;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(Center other) {
+      if (other == null) {
+        return;
+      }
+      if (other.ArithmeticMean != 0F) {
+        ArithmeticMean = other.ArithmeticMean;
+      }
+      if (other.GeometricMean != 0F) {
+        GeometricMean = other.GeometricMean;
+      }
+      if (other.HarmonicMean != 0F) {
+        HarmonicMean = other.HarmonicMean;
+      }
+      if (other.Median != 0F) {
+        Median = other.Median;
+      }
+      if (other.Mode != 0F) {
+        Mode = other.Mode;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 13: {
+            ArithmeticMean = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            GeometricMean = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            HarmonicMean = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            Median = input.ReadFloat();
+            break;
+          }
+          case 45: {
+            Mode = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class Dispersion : pb::IMessage<Dispersion> {
+    private static readonly pb::MessageParser<Dispersion> _parser = new pb::MessageParser<Dispersion>(() => new Dispersion());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<Dispersion> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::QuoteService.QuoteData.QuoteDataEventReflection.Descriptor.MessageTypes[2]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Dispersion() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Dispersion(Dispersion other) : this() {
+      variance_ = other.variance_;
+      standardDeviation_ = other.standardDeviation_;
+      coefficientVariation_ = other.coefficientVariation_;
+      range_ = other.range_;
+      interquartileRange_ = other.interquartileRange_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Dispersion Clone() {
+      return new Dispersion(this);
+    }
+
+    /// <summary>Field number for the "Variance" field.</summary>
+    public const int VarianceFieldNumber = 1;
+    private float variance_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Variance {
+      get { return variance_; }
+      set {
+        variance_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "StandardDeviation" field.</summary>
+    public const int StandardDeviationFieldNumber = 2;
+    private float standardDeviation_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float StandardDeviation {
+      get { return standardDeviation_; }
+      set {
+        standardDeviation_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "CoefficientVariation" field.</summary>
+    public const int CoefficientVariationFieldNumber = 3;
+    private float coefficientVariation_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float CoefficientVariation {
+      get { return coefficientVariation_; }
+      set {
+        coefficientVariation_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "Range" field.</summary>
+    public const int RangeFieldNumber = 4;
+    private float range_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Range {
+      get { return range_; }
+      set {
+        range_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "InterquartileRange" field.</summary>
+    public const int InterquartileRangeFieldNumber = 5;
+    private float interquartileRange_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float InterquartileRange {
+      get { return interquartileRange_; }
+      set {
+        interquartileRange_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as Dispersion);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(Dispersion other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Variance, other.Variance)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(StandardDeviation, other.StandardDeviation)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(CoefficientVariation, other.CoefficientVariation)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Range, other.Range)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(InterquartileRange, other.InterquartileRange)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Variance != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Variance);
+      if (StandardDeviation != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(StandardDeviation);
+      if (CoefficientVariation != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(CoefficientVariation);
+      if (Range != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Range);
+      if (InterquartileRange != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(InterquartileRange);
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Variance != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(Variance);
+      }
+      if (StandardDeviation != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(StandardDeviation);
+      }
+      if (CoefficientVariation != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(CoefficientVariation);
+      }
+      if (Range != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(Range);
+      }
+      if (InterquartileRange != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(InterquartileRange);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Variance != 0F) {
+        size += 1 + 4;
+      }
+      if (StandardDeviation != 0F) {
+        size += 1 + 4;
+      }
+      if (CoefficientVariation != 0F) {
+        size += 1 + 4;
+      }
+      if (Range != 0F) {
+        size += 1 + 4;
+      }
+      if (InterquartileRange != 0F) {
+        size += 1 + 4;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(Dispersion other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Variance != 0F) {
+        Variance = other.Variance;
+      }
+      if (other.StandardDeviation != 0F) {
+        StandardDeviation = other.StandardDeviation;
+      }
+      if (other.CoefficientVariation != 0F) {
+        CoefficientVariation = other.CoefficientVariation;
+      }
+      if (other.Range != 0F) {
+        Range = other.Range;
+      }
+      if (other.InterquartileRange != 0F) {
+        InterquartileRange = other.InterquartileRange;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 13: {
+            Variance = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            StandardDeviation = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            CoefficientVariation = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            Range = input.ReadFloat();
+            break;
+          }
+          case 45: {
+            InterquartileRange = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class ShapeMoments : pb::IMessage<ShapeMoments> {
+    private static readonly pb::MessageParser<ShapeMoments> _parser = new pb::MessageParser<ShapeMoments>(() => new ShapeMoments());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<ShapeMoments> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::QuoteService.QuoteData.QuoteDataEventReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ShapeMoments() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ShapeMoments(ShapeMoments other) : this() {
+      skewness_ = other.skewness_;
+      kurtosis_ = other.kurtosis_;
+      lMoments_ = other.lMoments_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ShapeMoments Clone() {
+      return new ShapeMoments(this);
+    }
+
+    /// <summary>Field number for the "Skewness" field.</summary>
+    public const int SkewnessFieldNumber = 1;
+    private float skewness_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Skewness {
+      get { return skewness_; }
+      set {
+        skewness_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "Kurtosis" field.</summary>
+    public const int KurtosisFieldNumber = 2;
+    private float kurtosis_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float Kurtosis {
+      get { return kurtosis_; }
+      set {
+        kurtosis_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "LMoments" field.</summary>
+    public const int LMomentsFieldNumber = 3;
+    private float lMoments_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float LMoments {
+      get { return lMoments_; }
+      set {
+        lMoments_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as ShapeMoments);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(ShapeMoments other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Skewness, other.Skewness)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Kurtosis, other.Kurtosis)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(LMoments, other.LMoments)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Skewness != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Skewness);
+      if (Kurtosis != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Kurtosis);
+      if (LMoments != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(LMoments);
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Skewness != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(Skewness);
+      }
+      if (Kurtosis != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(Kurtosis);
+      }
+      if (LMoments != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(LMoments);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Skewness != 0F) {
+        size += 1 + 4;
+      }
+      if (Kurtosis != 0F) {
+        size += 1 + 4;
+      }
+      if (LMoments != 0F) {
+        size += 1 + 4;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(ShapeMoments other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Skewness != 0F) {
+        Skewness = other.Skewness;
+      }
+      if (other.Kurtosis != 0F) {
+        Kurtosis = other.Kurtosis;
+      }
+      if (other.LMoments != 0F) {
+        LMoments = other.LMoments;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 13: {
+            Skewness = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            Kurtosis = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            LMoments = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class DescriptiveStatistics : pb::IMessage<DescriptiveStatistics> {
+    private static readonly pb::MessageParser<DescriptiveStatistics> _parser = new pb::MessageParser<DescriptiveStatistics>(() => new DescriptiveStatistics());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<DescriptiveStatistics> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::QuoteService.QuoteData.QuoteDataEventReflection.Descriptor.MessageTypes[4]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DescriptiveStatistics() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DescriptiveStatistics(DescriptiveStatistics other) : this() {
+      localTime_ = other.localTime_ != null ? other.localTime_.Clone() : null;
+      center_ = other.center_ != null ? other.center_.Clone() : null;
+      dispersion_ = other.dispersion_ != null ? other.dispersion_.Clone() : null;
+      shapeMoments_ = other.shapeMoments_ != null ? other.shapeMoments_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public DescriptiveStatistics Clone() {
+      return new DescriptiveStatistics(this);
+    }
+
+    /// <summary>Field number for the "LocalTime" field.</summary>
+    public const int LocalTimeFieldNumber = 1;
+    private global::Google.Protobuf.WellKnownTypes.Timestamp localTime_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Google.Protobuf.WellKnownTypes.Timestamp LocalTime {
+      get { return localTime_; }
+      set {
+        localTime_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "Center" field.</summary>
+    public const int CenterFieldNumber = 2;
+    private global::QuoteService.QuoteData.Center center_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::QuoteService.QuoteData.Center Center {
+      get { return center_; }
+      set {
+        center_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "Dispersion" field.</summary>
+    public const int DispersionFieldNumber = 3;
+    private global::QuoteService.QuoteData.Dispersion dispersion_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::QuoteService.QuoteData.Dispersion Dispersion {
+      get { return dispersion_; }
+      set {
+        dispersion_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "ShapeMoments" field.</summary>
+    public const int ShapeMomentsFieldNumber = 4;
+    private global::QuoteService.QuoteData.ShapeMoments shapeMoments_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::QuoteService.QuoteData.ShapeMoments ShapeMoments {
+      get { return shapeMoments_; }
+      set {
+        shapeMoments_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as DescriptiveStatistics);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(DescriptiveStatistics other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(LocalTime, other.LocalTime)) return false;
+      if (!object.Equals(Center, other.Center)) return false;
+      if (!object.Equals(Dispersion, other.Dispersion)) return false;
+      if (!object.Equals(ShapeMoments, other.ShapeMoments)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (localTime_ != null) hash ^= LocalTime.GetHashCode();
+      if (center_ != null) hash ^= Center.GetHashCode();
+      if (dispersion_ != null) hash ^= Dispersion.GetHashCode();
+      if (shapeMoments_ != null) hash ^= ShapeMoments.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (localTime_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(LocalTime);
+      }
+      if (center_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Center);
+      }
+      if (dispersion_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Dispersion);
+      }
+      if (shapeMoments_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(ShapeMoments);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (localTime_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(LocalTime);
+      }
+      if (center_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Center);
+      }
+      if (dispersion_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Dispersion);
+      }
+      if (shapeMoments_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ShapeMoments);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(DescriptiveStatistics other) {
+      if (other == null) {
+        return;
+      }
+      if (other.localTime_ != null) {
+        if (localTime_ == null) {
+          LocalTime = new global::Google.Protobuf.WellKnownTypes.Timestamp();
+        }
+        LocalTime.MergeFrom(other.LocalTime);
+      }
+      if (other.center_ != null) {
+        if (center_ == null) {
+          Center = new global::QuoteService.QuoteData.Center();
+        }
+        Center.MergeFrom(other.Center);
+      }
+      if (other.dispersion_ != null) {
+        if (dispersion_ == null) {
+          Dispersion = new global::QuoteService.QuoteData.Dispersion();
+        }
+        Dispersion.MergeFrom(other.Dispersion);
+      }
+      if (other.shapeMoments_ != null) {
+        if (shapeMoments_ == null) {
+          ShapeMoments = new global::QuoteService.QuoteData.ShapeMoments();
+        }
+        ShapeMoments.MergeFrom(other.ShapeMoments);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (localTime_ == null) {
+              LocalTime = new global::Google.Protobuf.WellKnownTypes.Timestamp();
+            }
+            input.ReadMessage(LocalTime);
+            break;
+          }
+          case 18: {
+            if (center_ == null) {
+              Center = new global::QuoteService.QuoteData.Center();
+            }
+            input.ReadMessage(Center);
+            break;
+          }
+          case 26: {
+            if (dispersion_ == null) {
+              Dispersion = new global::QuoteService.QuoteData.Dispersion();
+            }
+            input.ReadMessage(Dispersion);
+            break;
+          }
+          case 34: {
+            if (shapeMoments_ == null) {
+              ShapeMoments = new global::QuoteService.QuoteData.ShapeMoments();
+            }
+            input.ReadMessage(ShapeMoments);
+            break;
+          }
         }
       }
     }
@@ -375,7 +1316,7 @@ namespace QuoteService.QuoteData {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::QuoteService.QuoteData.QuoteDataEventReflection.Descriptor.MessageTypes[1]; }
+      get { return global::QuoteService.QuoteData.QuoteDataEventReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
