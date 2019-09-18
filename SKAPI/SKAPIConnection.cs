@@ -67,13 +67,12 @@ namespace SKAPI
 
         private void Publish(short sstockidx, int ndate, int ntimehms, int ntimemillismicros, int nclose, int nqty)
         {
+            if (!_quoteDict.ContainsKey(sstockidx)) return;
             var dt = DateTime.ParseExact(
                 $"{ndate} {ntimehms.ToString().PadLeft(6, '0')}.{ntimemillismicros.ToString().PadLeft(6, '0')}",
                 "yyyyMMdd HHmmss.ffffff",
                 System.Globalization.CultureInfo.InvariantCulture);
             nclose = nclose / 100;
-
-
             _quoteDict[sstockidx].quote?.DataBroker.Publish(new Tick()
             {
                 DealPrice = (float) nclose,
@@ -195,6 +194,7 @@ namespace SKAPI
                 InitSKCOMLib();
                 var conn = Connect().Result;
                 if (!conn) return conn;
+                UpdateQuoteDictKey();
                 foreach (var kv in _quoteDict)
                 {
                     var quote = kv.Value.quote;
@@ -208,6 +208,22 @@ namespace SKAPI
                 }
                 return true;
             });
+
+        private void UpdateQuoteDictKey()
+        {
+            var itemsToRefresh = _quoteDict.Where(f => f.Key != GetSKStockIdx(f.Value.quote.QuoteInfo.Symbol)).ToArray();
+
+            foreach (var item in itemsToRefresh)
+            {
+                var oldkey = item.Key;
+                var newkey = GetSKStockIdx(item.Value.quote.QuoteInfo.Symbol);
+                var quote = item.Value.quote;
+                short pgNo = item.Value.pageNo;
+
+                _quoteDict.Add(newkey, (pgNo, quote));
+                _quoteDict.Remove(oldkey);
+            }
+        }
 
         public async Task Disconnect()
             => await Task.Run(() =>
