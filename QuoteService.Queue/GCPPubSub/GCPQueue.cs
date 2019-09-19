@@ -44,6 +44,7 @@ namespace QuoteService.Queue
 
         public void Dispose()
         {
+            _logger.Debug("[GCPFanout.Dispose()] Delete topic: {_topicID}.",_topicID);
             _publisherService.DeleteTopic(_topicName);
         }
 

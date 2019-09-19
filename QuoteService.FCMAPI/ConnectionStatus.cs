@@ -6,5 +6,6 @@
         Connecting,
         ConnectionReady,
         ConnectionError,
+        Unknown
     }
 }

@@ -22,7 +22,7 @@ namespace QuoteService.Quote
         public QuoteInfo QuoteInfo { get; set; }
 
         public string Name => QuoteInfo.Exchange + "." + QuoteInfo.Symbol;
-        public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromSeconds(1);
+        public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromMinutes(30);
         public DataEventBroker<Tick> DataBroker { get; set; }
         //public QueueConnectionClient QueueConn { get; set; }
         public OHLC LastOHLC { get; set; }
@@ -90,7 +90,9 @@ namespace QuoteService.Quote
 
         public void Dispose()
         {
+            _logger.Debug("[Quote.Dispose()] {symbol} Complete data broker.", QuoteInfo.Symbol);
             DataBroker.Close();
+            _logger.Debug("[Quote.Dispose()] {symbol} Release queue resources", QuoteInfo.Symbol);
             _queueFanout.Dispose();
         }
     }

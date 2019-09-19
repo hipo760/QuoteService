@@ -185,6 +185,10 @@
       <Project>{B2FC3DE2-753B-4381-A9A5-A582607B7627}</Project>
       <Name>QuoteService.Queue</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QuoteService.QuoteData\QuoteService.QuoteData.csproj">
+      <Project>{ECF482F1-4901-4293-AA53-8763B3214C03}</Project>
+      <Name>QuoteService.QuoteData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SKAPI\SKAPI.csproj">
       <Project>{7218EAA0-86EB-4557-A492-F68DE674B0C1}</Project>
       <Name>SKAPI</Name>
