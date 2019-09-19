@@ -6,6 +6,7 @@ using Nancy.Bootstrappers.Autofac;
 using Nancy.Configuration;
 using QuoteService.FCMAPI;
 using QuoteService.Queue;
+using QuoteService.QuoteData;
 using Serilog;
 using Serilog.Events;
 using SKAPI;
@@ -45,15 +46,29 @@ namespace QuoteService
             existingContainer.Configure<GCPPubSubSetting>(existingContainer.Resolve<IConfiguration>().GetSection("GCPPubSubSetting"));
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register GCPPubSub configuration...done.");
 
+
+            // Register ConnectionStatusEvent broker.
+            existingContainer.Update(builder =>
+                builder.RegisterInstance(new DataEventBroker<ConnectionStatusEvent>())
+                    .As<DataEventBroker<ConnectionStatusEvent>>());
+
+
             // Register IFCMAPIConnection
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register Futures Commission Merchant (FCM) API ...");
-            
             existingContainer.Update(builder => builder.RegisterInstance(new SKAPIConnection(
                 existingContainer.Resolve<ILogger>(),
+                existingContainer.Resolve<DataEventBroker<ConnectionStatusEvent>>(),
                 existingContainer.Resolve<SKAPISetting>(),
                 existingContainer.Resolve<GCPPubSubSetting>()
             )).As<IFCMAPIConnection>());
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register Futures Commission Merchant (FCM) API ...done.");
+
+            // Register HealthAction
+            existingContainer.Update(builder => builder.RegisterInstance(new HealthAction(
+                existingContainer.Resolve<IFCMAPIConnection>(),
+                existingContainer.Resolve<ILogger>(),
+                existingContainer.Resolve<DataEventBroker<ConnectionStatusEvent>>()
+                )));
         }
 
         private IConfiguration LoadConfiguration() => new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true).Build();
