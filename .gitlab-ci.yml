@@ -23,11 +23,7 @@ deploy_job:
   only:
     - master
   script:
-    - 'net stop QuoteService'
-    - 'sc delete QuoteService'
-    - 'xcopy /y /s ".\QuoteService\bin\Release\*.*" "C:\QuoteService\bin"'
-    - 'gsutil cp gs://sk_quote_lib/appsettings.json C:/QuoteService/bin/'
-    - 'C:\QuoteService\bin\QuoteService.exe install'
-    - 'net start QuoteService'
+    - 'gsutil cp gs://sk_quote_lib/gitlab-cd.ps1 C:/QuoteService/'
+    - 'powershell -noexit "& ""C:\QuoteService\gitlab-cd.ps1"""'
   dependencies:
     - build_job
