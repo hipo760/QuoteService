@@ -341,3 +341,4 @@ healthchecksdb
 /QuoteService/appsettings.json
 /SKAPI/lib
 /Queue/RabbitQueue.cs
+/gitlab-cd.ps1

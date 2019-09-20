@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A5C7FF35-D640-4F2D-875F-FF3ADE0484AD}"
 	ProjectSection(SolutionItems) = preProject
 		.gitlab-ci.yml = .gitlab-ci.yml
+		gitlab-cd.ps1 = gitlab-cd.ps1
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.FCMAPI", "QuoteService.FCMAPI\QuoteService.FCMAPI.csproj", "{C068B274-2F8E-450C-A075-AB629B51D6B1}"
