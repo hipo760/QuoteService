@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Cloud.PubSub.V1;
 using Serilog;
@@ -76,6 +77,7 @@ namespace QuoteService.Queue
             await Task.Run(() =>
             {
                 _publisher.PublishAsync(message);
+                //Thread.Sleep(TimeSpan.FromMilliseconds(1000));
             });
         }
     }
