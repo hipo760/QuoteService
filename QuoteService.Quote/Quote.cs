@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using QuoteService.Queue;
@@ -22,7 +23,7 @@ namespace QuoteService.Quote
         public QuoteInfo QuoteInfo { get; set; }
 
         public string Name => QuoteInfo.Exchange + "." + QuoteInfo.Symbol;
-        public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromMinutes(30);
+        public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromMinutes(1);
         public DataEventBroker<Tick> DataBroker { get; set; }
         //public QueueConnectionClient QueueConn { get; set; }
         public OHLC LastOHLC { get; set; }
@@ -30,13 +31,13 @@ namespace QuoteService.Quote
         private ILogger _logger;
         private QueueConnectionClient _queueFanout;
 
-        public Quote(QuoteInfo quoteInfo,ILogger logger,GCPPubSubSetting setting)
+        public Quote(QuoteInfo quoteInfo,ILogger logger)//,GCPPubSubSetting setting)
         {
             QuoteInfo = quoteInfo;
             _logger = logger;
             _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...", QuoteInfo.Symbol);
-            _queueFanout  = new QueueConnectionClient(new GCPPubSubService(setting.ProjectID,_logger));
-            _queueFanout.FanoutConn.InitTopic(Name).Wait();
+            //_queueFanout  = new QueueConnectionClient(new GCPPubSubService(setting.ProjectID,_logger));
+            //_queueFanout.FanoutConn.InitTopic(Name).Wait();
             _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...done", QuoteInfo.Symbol);
             InitTickBroker();
         }
@@ -67,7 +68,7 @@ namespace QuoteService.Quote
                 //LastOHLC.LogOHLC();
                 var ohlcstr = LastOHLC.SerializeToString_PB();
                 //Console.WriteLine(ohlcstr);
-                _queueFanout.FanoutConn.Send(ohlcstr);
+                //_queueFanout.FanoutConn.Send(ohlcstr);
                 //QueueConn?.Send(LastOHLC.SerializeToString_PB());
             });
         }

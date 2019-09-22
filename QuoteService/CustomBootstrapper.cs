@@ -42,9 +42,9 @@ namespace QuoteService
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register SKAPI configuration...done.");
 
             // Register GCPPubSubSetting
-            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register GCPPubSub configuration...");
-            existingContainer.Configure<GCPPubSubSetting>(existingContainer.Resolve<IConfiguration>().GetSection("GCPPubSubSetting"));
-            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register GCPPubSub configuration...done.");
+            //log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register GCPPubSub configuration...");
+            //existingContainer.Configure<GCPPubSubSetting>(existingContainer.Resolve<IConfiguration>().GetSection("GCPPubSubSetting"));
+            //log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register GCPPubSub configuration...done.");
 
 
             // Register ConnectionStatusEvent broker.
@@ -58,8 +58,8 @@ namespace QuoteService
             existingContainer.Update(builder => builder.RegisterInstance(new SKAPIConnection(
                 existingContainer.Resolve<ILogger>(),
                 existingContainer.Resolve<DataEventBroker<ConnectionStatusEvent>>(),
-                existingContainer.Resolve<SKAPISetting>(),
-                existingContainer.Resolve<GCPPubSubSetting>()
+                existingContainer.Resolve<SKAPISetting>()
+                //existingContainer.Resolve<GCPPubSubSetting>()
             )).As<IFCMAPIConnection>());
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register Futures Commission Merchant (FCM) API ...done.");
 

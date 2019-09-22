@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Cloud.PubSub.V1;
 using Serilog;
@@ -45,6 +46,7 @@ namespace QuoteService.Queue
         public void Dispose()
         {
             _logger.Debug("[GCPFanout.Dispose()] Delete topic: {_topicID}.",_topicID);
+            _publisher.ShutdownAsync(TimeSpan.FromSeconds(15));
             _publisherService.DeleteTopic(_topicName);
         }
 
@@ -75,7 +77,7 @@ namespace QuoteService.Queue
             await Task.Run(() =>
             {
                 _publisher.PublishAsync(message);
-                _publisher.ShutdownAsync(TimeSpan.FromSeconds(15));
+                //Thread.Sleep(TimeSpan.FromMilliseconds(1000));
             });
         }
     }

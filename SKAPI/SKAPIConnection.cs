@@ -25,7 +25,7 @@ namespace SKAPI
         SKReplyLib _skReply;
         SKQuoteLib _skQuotes;
         internal SKAPISetting _apiSetting;
-        internal GCPPubSubSetting _queueSetting;
+        //internal GCPPubSubSetting _queueSetting;
         internal int _loginCode = -1;
 
         protected Dictionary<short, (short pageNo, Quote quote)> _quoteDict;
@@ -36,13 +36,13 @@ namespace SKAPI
 
         //protected DataEventBroker<MessageEvent> _messagEventBroker;
 
-        public SKAPIConnection(ILogger logger, DataEventBroker<ConnectionStatusEvent> connStatusBroker, SKAPISetting apiSetting, GCPPubSubSetting queueSetting)
+        public SKAPIConnection(ILogger logger, DataEventBroker<ConnectionStatusEvent> connStatusBroker, SKAPISetting apiSetting)
         {
             _logger = logger;
             _connStatusBroker = connStatusBroker;
             //_messagEventBroker = messageEventBroker;
             _apiSetting = apiSetting;
-            _queueSetting = queueSetting;
+            //_queueSetting = queueSetting;
             _logger.Debug("[SKAPIConnection()] Begin of constructor...");
             _quoteDict = new Dictionary<short, (short pageNo, Quote quote)>();
             _skStatus = ConnectionStatus.NotConnected;
@@ -293,7 +293,7 @@ namespace SKAPI
                     ApiSource = "Capital",
                     Exchange = exchange,
                     Symbol = symbol
-                },_logger, _queueSetting))
+                },_logger))
                 );
 
                 switch (exchange)

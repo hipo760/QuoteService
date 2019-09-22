@@ -23,7 +23,7 @@ deploy_job:
   only:
     - master
   script:
-    - 'gsutil cp gs://sk_quote_lib/gitlab-cd.ps1 C:/QuoteService/'
+    - 'gsutil cp gs://quote_vm_ci_cd/gitlab-cd.ps1 C:/QuoteService/'
     - 'powershell -noexit "& ""C:\QuoteService\gitlab-cd.ps1"""'
   dependencies:
     - build_job
