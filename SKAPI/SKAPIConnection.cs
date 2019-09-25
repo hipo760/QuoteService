@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using QuoteService.FCMAPI;
 using Google.Protobuf.WellKnownTypes;
+using Microsoft.Extensions.Configuration;
 using Polly;
 using QuoteService.Queue;
 using QuoteService.Quote;
@@ -24,6 +25,7 @@ namespace SKAPI
         SKCenterLib _skCenter;
         SKReplyLib _skReply;
         SKQuoteLib _skQuotes;
+        private IConfiguration _config;
         internal SKAPISetting _apiSetting;
         //internal GCPPubSubSetting _queueSetting;
         internal int _loginCode = -1;
@@ -36,12 +38,14 @@ namespace SKAPI
 
         //protected DataEventBroker<MessageEvent> _messagEventBroker;
 
-        public SKAPIConnection(ILogger logger, DataEventBroker<ConnectionStatusEvent> connStatusBroker, SKAPISetting apiSetting)
+        public SKAPIConnection(ILogger logger, DataEventBroker<ConnectionStatusEvent> connStatusBroker, IConfiguration config)
         {
             _logger = logger;
             _connStatusBroker = connStatusBroker;
+            _config = config;
             //_messagEventBroker = messageEventBroker;
-            _apiSetting = apiSetting;
+            _apiSetting = new SKAPISetting();
+            config.GetSection("SKAPISetting").Bind(_apiSetting);
             //_queueSetting = queueSetting;
             _logger.Debug("[SKAPIConnection()] Begin of constructor...");
             _quoteDict = new Dictionary<short, (short pageNo, Quote quote)>();
@@ -289,11 +293,11 @@ namespace SKAPI
                 _logger.Debug("[SKAPIConnection.AddQuoteRequest()] Add {symbol} to quote dict with key: {key}...",symbol,skIdx);
                 _quoteDict.Add(skIdx, 
                     (pageNo,
-                    new Quote(new QuoteInfo() {
-                    ApiSource = "Capital",
-                    Exchange = exchange,
-                    Symbol = symbol
-                },_logger))
+                    new Quote(
+                        new QuoteInfo() {ApiSource = "Capital", Exchange = exchange, Symbol = symbol},
+                        _logger,
+                        _config)
+                    )
                 );
 
                 switch (exchange)
