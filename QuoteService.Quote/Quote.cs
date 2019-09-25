@@ -40,7 +40,7 @@ namespace QuoteService.Quote
             _logger = logger;
             _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...", QuoteInfo.Symbol);
             _queueFanout  = new QueueConnectionClient(new RabbitQueueService(logger,config));
-            //_queueFanout.FanoutConn.InitTopic(Name).Wait();
+            _queueFanout.FanoutConn.InitTopic(Name).Wait();
             _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...done", QuoteInfo.Symbol);
             InitTickBroker();
         }
