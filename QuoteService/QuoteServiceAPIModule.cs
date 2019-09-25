@@ -7,6 +7,7 @@ namespace QuoteService
     public class QuoteServiceAPIModule : NancyModule
     {
         private static readonly Object obj = new Object();
+
         public QuoteServiceAPIModule(IFCMAPIConnection fcmAPI)
         {
 
@@ -14,67 +15,45 @@ namespace QuoteService
 
             Get("/Connect/Status", _ => fcmAPI.APIStatus.ToString());
 
-            Post("/Connect",  parameters =>
+            Post("/Connect", parameters =>
             {
-                lock (obj)
-                {
-                    return fcmAPI.Connect().Result
-                        ? HttpStatusCode.Accepted
-                        : HttpStatusCode.BadRequest;
-                }
-                
+                return fcmAPI.Connect().Result
+                    ? HttpStatusCode.Accepted
+                    : HttpStatusCode.BadRequest;
             });
 
-            Post("/Reconnect",  parameters =>
+            Post("/Reconnect", parameters =>
             {
-                lock (obj)
-                {
-                    return fcmAPI.Reconnect().Result
-                        ? HttpStatusCode.Accepted
-                        : HttpStatusCode.BadRequest;
-                }
+                return fcmAPI.Reconnect().Result
+                    ? HttpStatusCode.Accepted
+                    : HttpStatusCode.BadRequest;
             });
 
-            Post("/Disconnect", _ =>
-            {
-                lock (obj)
-                {
-                    return fcmAPI.Disconnect();
-                }
-            });
+            Post("/Disconnect", _ => { return fcmAPI.Disconnect(); });
 
 
             Get("/Quote", _ => String.Join(",", fcmAPI.QuotesList.ToArray()));
 
-            Post("/Quote/{exchange}/{symbol}",  parameters =>
+            Post("/Quote/{exchange}/{symbol}", parameters =>
             {
-                lock(obj)
-                {
-                    var exchange = (string) parameters.exchange;
-                    var symbol = (string) parameters.symbol;
-                    return fcmAPI.AddQuote(exchange, symbol).Result
-                        ? HttpStatusCode.Accepted
-                        : HttpStatusCode.BadRequest;
-                }
+
+                var exchange = (string) parameters.exchange;
+                var symbol = (string) parameters.symbol;
+                return fcmAPI.AddQuote(exchange, symbol).Result
+                    ? HttpStatusCode.Accepted
+                    : HttpStatusCode.BadRequest;
+
             });
-            Delete("/Quote/{exchange}/{symbol}",  parameters =>
+            Delete("/Quote/{exchange}/{symbol}", parameters =>
             {
-                lock (obj)
-                {
-                    var exchange = (string) parameters.exchange;
-                    var symbol = (string) parameters.symbol;
-                    return fcmAPI.RemoveQuote(exchange, symbol).Result
-                        ? HttpStatusCode.Accepted
-                        : HttpStatusCode.BadRequest;
-                }
+                var exchange = (string) parameters.exchange;
+                var symbol = (string) parameters.symbol;
+                return fcmAPI.RemoveQuote(exchange, symbol).Result
+                    ? HttpStatusCode.Accepted
+                    : HttpStatusCode.BadRequest;
+
             });
-            Delete("/Quote", parameters =>
-            {
-                lock (obj)
-                {
-                    return fcmAPI.RemoveAllQuotes();
-                }
-            });
+            Delete("/Quote", parameters => { return fcmAPI.RemoveAllQuotes(); });
         }
     }
 }

@@ -71,7 +71,7 @@ namespace QuoteService.Quote
                 //LastOHLC.LogOHLC();
                 var ohlcstr = LastOHLC.SerializeToString_PB();
                 //Console.WriteLine(ohlcstr);
-                //_queueFanout.FanoutConn.Send(ohlcstr);
+                _queueFanout.FanoutConn.Send(ohlcstr);
                 //QueueConn?.Send(LastOHLC.SerializeToString_PB());
             });
         }
