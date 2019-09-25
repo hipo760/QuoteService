@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -6,7 +7,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
+using Microsoft.Extensions.Configuration;
 using QuoteService.Queue;
+using QuoteService.Queue.RabbitMQ;
 using QuoteService.QuoteData;
 using Serilog;
 
@@ -23,7 +26,7 @@ namespace QuoteService.Quote
         public QuoteInfo QuoteInfo { get; set; }
 
         public string Name => QuoteInfo.Exchange + "." + QuoteInfo.Symbol;
-        public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromMinutes(1);
+        public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromSeconds(1);
         public DataEventBroker<Tick> DataBroker { get; set; }
         //public QueueConnectionClient QueueConn { get; set; }
         public OHLC LastOHLC { get; set; }
@@ -31,12 +34,12 @@ namespace QuoteService.Quote
         private ILogger _logger;
         private QueueConnectionClient _queueFanout;
 
-        public Quote(QuoteInfo quoteInfo,ILogger logger)//,GCPPubSubSetting setting)
+        public Quote(QuoteInfo quoteInfo,ILogger logger,IConfiguration config)//,GCPPubSubSetting setting)
         {
             QuoteInfo = quoteInfo;
             _logger = logger;
             _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...", QuoteInfo.Symbol);
-            //_queueFanout  = new QueueConnectionClient(new GCPPubSubService(setting.ProjectID,_logger));
+            _queueFanout  = new QueueConnectionClient(new RabbitQueueService(logger,config));
             //_queueFanout.FanoutConn.InitTopic(Name).Wait();
             _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...done", QuoteInfo.Symbol);
             InitTickBroker();
@@ -94,7 +97,7 @@ namespace QuoteService.Quote
             _logger.Debug("[Quote.Dispose()] {symbol} Complete data broker.", QuoteInfo.Symbol);
             DataBroker.Close();
             _logger.Debug("[Quote.Dispose()] {symbol} Release queue resources", QuoteInfo.Symbol);
-            _queueFanout.Dispose();
+            //_queueFanout.Dispose();
         }
     }
 }

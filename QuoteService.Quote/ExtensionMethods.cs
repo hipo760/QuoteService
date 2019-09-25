@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace QuoteService.Quote
 {

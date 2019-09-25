@@ -58,7 +58,7 @@ namespace QuoteService
             existingContainer.Update(builder => builder.RegisterInstance(new SKAPIConnection(
                 existingContainer.Resolve<ILogger>(),
                 existingContainer.Resolve<DataEventBroker<ConnectionStatusEvent>>(),
-                existingContainer.Resolve<SKAPISetting>()
+                existingContainer.Resolve<IConfiguration>()
                 //existingContainer.Resolve<GCPPubSubSetting>()
             )).As<IFCMAPIConnection>());
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register Futures Commission Merchant (FCM) API ...done.");
