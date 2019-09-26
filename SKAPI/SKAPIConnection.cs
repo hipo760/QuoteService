@@ -22,141 +22,71 @@ namespace SKAPI
     public partial class SKAPIConnection : IFCMAPIConnection
     {
         protected ILogger _logger;
-        SKCenterLib _skCenter;
-        SKReplyLib _skReply;
-        SKQuoteLib _skQuotes;
+        private DataEventBroker<ConnectionStatusEvent> _connStatusBroker;
         private IConfiguration _config;
-        internal SKAPISetting _apiSetting;
-        //internal GCPPubSubSetting _queueSetting;
-        internal int _loginCode = -1;
 
+        internal SKAPISetting _apiSetting;
+        internal int _loginCode = -1;
         protected Dictionary<short, (short pageNo, Quote quote)> _quoteDict;
         protected ConnectionStatus _skStatus;
 
-        private DataEventBroker<ConnectionStatusEvent> _connStatusBroker;
-        //private static readonly Object obj = new Object();
-
-        //protected DataEventBroker<MessageEvent> _messagEventBroker;
+        private SKCenterLib _skCenter;
+        private SKReplyLib _skReply;
+        private SKQuoteLib _skQuotes;
 
         public SKAPIConnection(ILogger logger, DataEventBroker<ConnectionStatusEvent> connStatusBroker, IConfiguration config)
         {
             _logger = logger;
             _connStatusBroker = connStatusBroker;
             _config = config;
-            //_messagEventBroker = messageEventBroker;
+            
             _apiSetting = new SKAPISetting();
             config.GetSection("SKAPISetting").Bind(_apiSetting);
-            //_queueSetting = queueSetting;
+            
             _logger.Debug("[SKAPIConnection()] Begin of constructor...");
             _quoteDict = new Dictionary<short, (short pageNo, Quote quote)>();
             _skStatus = ConnectionStatus.NotConnected;
             InitSKCOMLib();
-            //Connect().Wait();
-            
         }
 
-        //protected Task _skQuotes_OnNotifyTicks(
-        //    short smarketno, short sindex, int nptr, 
-        //    int ndate, int ntimehms, int ntimemillismicros, 
-        //    int nbid, int nask, 
-        //    int nclose, int nqty, 
-        //    int nsimulate)
-        //{
-        //    //_quoteDict[sindex]?.DataBroker.Close();
-        //    return Task.Run(()=> Publish(sindex, ndate, ntimehms, ntimemillismicros, nclose, nqty));
-        //}
-
-        //protected Task _skQuotes_OnNotifyHistoryTicks(
-        //    short smarketno, short sstockidx, int nptr,
-        //    int ndate, int ntimehms, int ntimemillismicros,
-        //    int nbid, int nask,
-        //    int nclose, int nqty,
-        //    int nsimulate)
-        //{
-            
-        //    return Task.Run(() => Publish(sstockidx, ndate, ntimehms, ntimemillismicros, nclose, nqty));
-        //}
-
-        private Task Publish(short sstockidx, int ndate, int ntimehms, int ntimemillismicros, int nclose, int nqty)
-        {
-            return Task.Run(() =>
-            {
-                if (!_quoteDict.ContainsKey(sstockidx)) return;
-                var dt = DateTime.ParseExact(
-                    $"{ndate} {ntimehms.ToString().PadLeft(6, '0')}.{ntimemillismicros.ToString().PadLeft(6, '0')}",
-                    "yyyyMMdd HHmmss.ffffff",
-                    System.Globalization.CultureInfo.InvariantCulture);
-                nclose = nclose / 100;
-                _quoteDict[sstockidx].quote?.DataBroker.Publish(new Tick()
-                {
-                    DealPrice = (float)nclose,
-                    DealQty = nqty,
-                    LocalTime = dt.ToUniversalTime().ToTimestamp()
-                });
-            });
-        }
-
-        //private Action<int,int> SkQuotes_OnConnection
-        //{
-        //    get
-        //    {
-        //        return (nkind, ncode) =>
-        //        {
-        //            _logger.Debug("[SKAPIConnection.SkQuotes_OnConnection()] {nkind}", nkind);
-        //            switch (nkind)
-        //            {
-        //                case 3001:
-        //                    _skStatus = ConnectionStatus.Connecting;
-        //                    break;
-        //                case 3003:
-        //                    _skStatus = ConnectionStatus.ConnectionReady;
-        //                    break;
-        //                case 3002:
-        //                    _skStatus = ConnectionStatus.NotConnected;
-        //                    break;
-        //                case 3021:
-        //                case 3022:
-        //                    _skStatus = ConnectionStatus.ConnectionError;
-        //                    break;
-        //                default:
-        //                    _skStatus = ConnectionStatus.Unknown;
-        //                    break;
-        //            }
-        //            _connStatusBroker.Publish(ConnectionStatusEvent.GetEvent(_skStatus, nkind.ToString()));
-        //        };
-        //    }
-        //}
 
         private short GetSKStockIdx(string symbol)
         {
-            var refStock = new SKSTOCK();
+            _logger.Debug("[SKAPIConnection.GetSKStockIdx()] {symbol}",  symbol);
+            SKSTOCK refStock = new SKSTOCK();
+            _logger.Debug("[SKAPIConnection.SKQuoteLib_GetStockByNo()] {symbol}", symbol);
             var code = _skQuotes.SKQuoteLib_GetStockByNo(symbol, ref refStock);
+            _logger.Debug("[SKAPIConnection.SKQuoteLib_GetStockByNo()] {code}", code);
             return (code == 0) ? refStock.sStockIdx : (short)-1;
         }
 
         private void ReleaseSKCOMObject()
         {
             _logger.Debug("[SKAPIConnection.ReleaseSKCOMObject()] Release...");
-            _skQuotes.OnConnection -= _skQuotes_OnConnection;
-            if (_skReply != null) Marshal.ReleaseComObject(_skReply);
+
+            //OnConnectionEvent -= (kind, code) => ConnectionEventHandler(kind, code);
+            //OnNotifyTicksEvent
+            //    -= (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
+            //        => TickHandler(index, date, timehms, timemillismicros, close, qty, simulate);
+            //OnNotifyHistoryTicksEvent
+            //    -= (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
+            //        => TickHandler(index, date, timehms, timemillismicros, close, qty, simulate);
+
+            OnConnectionEvent -= UpdateConnectionStatus;
+            OnNotifyTicksEvent -= SKAPIConnection_OnNotifyTicksEvent;
+            OnNotifyHistoryTicksEvent -= SKAPIConnection_OnNotifyTicksEvent;
+
+            //if (_skReply != null) Marshal.ReleaseComObject(_skReply);
             // 2.13.18
             //_skReply.OnReplyMessage -= SkReply_OnReplyMessage;
             
             _skQuotes.SKQuoteLib_LeaveMonitor();
             Thread.Sleep(TimeSpan.FromMilliseconds(_apiSetting.SKServerLoadingTime));
-            _skQuotes.OnNotifyTicks -= _skQuotes_OnNotifyTicks;
-            _skQuotes.OnNotifyHistoryTicks -= _skQuotes_OnNotifyHistoryTicks;
+            
 
-            //_skQuotes.OnNotifyTicks
-            //    -= async (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
-            //        => await _skQuotes_OnNotifyTicks(no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty,
-            //            simulate);
-            //_skQuotes.OnNotifyHistoryTicks
-            //    -= async (no, idx, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
-            //        => await _skQuotes_OnNotifyHistoryTicks(no, idx, ptr, date, timehms, timemillismicros, bid, ask,
-            //            close, qty, simulate);
-            if (_skQuotes != null) Marshal.ReleaseComObject(_skQuotes);
-            if (_skCenter != null) Marshal.ReleaseComObject(_skCenter);
+            
+            //if (_skQuotes != null) Marshal.ReleaseComObject(_skQuotes);
+            //if (_skCenter != null) Marshal.ReleaseComObject(_skCenter);
             _logger.Debug("[SKAPIConnection.ReleaseSKCOMObject()] Clear.");
             _skStatus = ConnectionStatus.NotConnected;
         }
@@ -164,58 +94,29 @@ namespace SKAPI
         private void InitSKCOMLib()
         {
             _logger.Debug("[SKAPIConnection.InitSKCOMLib()] Init...");
+
             _skCenter = new SKCenterLib();
             _skReply = new SKReplyLib();
             _skQuotes = new SKQuoteLib();
-            _skQuotes.OnConnection += _skQuotes_OnConnection;
-            _skQuotes.OnNotifyTicks += _skQuotes_OnNotifyTicks;
-            _skQuotes.OnNotifyHistoryTicks += _skQuotes_OnNotifyHistoryTicks;
-            //_skQuotes.OnNotifyTicks 
-            //    += async (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate) 
-            //        => await _skQuotes_OnNotifyTicks(no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty,
-            //        simulate);
-            //_skQuotes.OnNotifyHistoryTicks
-            //    += async (no, idx, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate) 
-            //        => await _skQuotes_OnNotifyHistoryTicks(no, idx, ptr, date, timehms, timemillismicros, bid, ask,
-            //            close, qty, simulate);
+
+            //OnConnectionEvent += (kind, code) => ConnectionEventHandler(kind,code);
+            //OnNotifyTicksEvent
+            //    += (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
+            //        => TickHandler(index, date, timehms, timemillismicros, close, qty, simulate);
+            //OnNotifyHistoryTicksEvent
+            //    += (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
+            //        => TickHandler(index, date, timehms, timemillismicros, close, qty, simulate);
+
+
+            OnConnectionEvent += UpdateConnectionStatus;
+            OnNotifyTicksEvent += SKAPIConnection_OnNotifyTicksEvent;
+            OnNotifyHistoryTicksEvent += SKAPIConnection_OnNotifyTicksEvent;
+
             // 2.13.18
             //_skReply.OnReplyMessage += SkReply_OnReplyMessage;
         }
 
-        private async void _skQuotes_OnNotifyHistoryTicks(short sMarketNo, short sIndex, int nPtr, int nDate, int nTimehms, int nTimemillismicros, int nBid, int nAsk, int nClose, int nQty, int nSimulate)
-        {
-            await Publish(sIndex, nDate, nTimehms, nTimemillismicros, nClose, nQty);
-        }
-
-        private async void _skQuotes_OnNotifyTicks(short sMarketNo, short sIndex, int nPtr, int nDate, int nTimehms, int nTimemillismicros, int nBid, int nAsk, int nClose, int nQty, int nSimulate)
-        {
-            await Publish(sIndex, nDate, nTimehms, nTimemillismicros, nClose, nQty);
-        }
-
-        private void _skQuotes_OnConnection(int nkind, int ncode)
-        {
-            _logger.Debug("[SKAPIConnection.SkQuotes_OnConnection()] {nkind}", nkind);
-            switch (nkind)
-            {
-                case 3001:
-                    _skStatus = ConnectionStatus.Connecting;
-                    break;
-                case 3003:
-                    _skStatus = ConnectionStatus.ConnectionReady;
-                    break;
-                case 3002:
-                    _skStatus = ConnectionStatus.NotConnected;
-                    break;
-                case 3021:
-                case 3022:
-                    _skStatus = ConnectionStatus.ConnectionError;
-                    break;
-                default:
-                    _skStatus = ConnectionStatus.Unknown;
-                    break;
-            }
-            _connStatusBroker.Publish(ConnectionStatusEvent.GetEvent(_skStatus, _skCenter.SKCenterLib_GetReturnCodeMessage(nkind)));
-        }
+        
 
         private void SkReply_OnReplyMessage(string bstrUserID, string bstrMessage, out short sConfirmCode)
         {
@@ -278,7 +179,6 @@ namespace SKAPI
             => await Task.Run(() =>
             {
                 _logger.Debug("[SKAPIConnection.Disconnect()] Disconnect...");
-                //_connStatusBroker.Publish(ConnectionStatusEvent.GetEvent(ConnectionStatus.NotConnected, "Reactive way"));
                 RemoveAllQuotes().Wait();
                 ReleaseSKCOMObject();
                 InitSKCOMLib();
@@ -287,7 +187,19 @@ namespace SKAPI
         public async Task<bool> AddQuote(string exchange, string symbol)
             => await Task<bool>.Run(() =>
             {
-                var skIdx = GetSKStockIdx(symbol);
+                _logger.Debug("[SKAPIConnection.AddQuote()] {exchange},{symbol}",exchange,symbol);
+                short skIdx;
+                try
+                {
+                    skIdx = GetSKStockIdx(symbol);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    throw;
+                }
+                
+
                 if (_quoteDict.Any(p => p.Value.quote.QuoteInfo.Symbol == symbol) || skIdx < 0) return false;
                 short pageNo = (short)(_quoteDict.Count);
                 _logger.Debug("[SKAPIConnection.AddQuoteRequest()] Add {symbol} to quote dict with key: {key}...",symbol,skIdx);
