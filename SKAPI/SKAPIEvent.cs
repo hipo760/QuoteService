@@ -40,9 +40,9 @@ namespace SKAPI
                     _skStatus = ConnectionStatus.ConnectionReady;
                     break;
                 case 3002:
+                case 3021:
                     _skStatus = ConnectionStatus.NotConnected;
                     break;
-                case 3021:
                 case 3022:
                     _skStatus = ConnectionStatus.ConnectionError;
                     break;
