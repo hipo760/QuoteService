@@ -74,9 +74,9 @@ namespace SKAPI
 
             OnConnectionEvent -= UpdateConnectionStatus;
             OnNotifyTicksEvent -= SKAPIConnection_OnNotifyTicksEvent;
-            OnNotifyHistoryTicksEvent -= SKAPIConnection_OnNotifyTicksEvent;
+            OnNotifyHistoryTicksEvent -= SKAPIConnection_OnNotifyHistoryTicksEvent;
 
-            //if (_skReply != null) Marshal.ReleaseComObject(_skReply);
+            if (_skReply != null) Marshal.ReleaseComObject(_skReply);
             // 2.13.18
             //_skReply.OnReplyMessage -= SkReply_OnReplyMessage;
             
@@ -85,8 +85,8 @@ namespace SKAPI
             
 
             
-            //if (_skQuotes != null) Marshal.ReleaseComObject(_skQuotes);
-            //if (_skCenter != null) Marshal.ReleaseComObject(_skCenter);
+            if (_skQuotes != null) Marshal.ReleaseComObject(_skQuotes);
+            if (_skCenter != null) Marshal.ReleaseComObject(_skCenter);
             _logger.Debug("[SKAPIConnection.ReleaseSKCOMObject()] Clear.");
             _skStatus = ConnectionStatus.NotConnected;
         }
@@ -110,7 +110,7 @@ namespace SKAPI
 
             OnConnectionEvent += UpdateConnectionStatus;
             OnNotifyTicksEvent += SKAPIConnection_OnNotifyTicksEvent;
-            OnNotifyHistoryTicksEvent += SKAPIConnection_OnNotifyTicksEvent;
+            OnNotifyHistoryTicksEvent += SKAPIConnection_OnNotifyHistoryTicksEvent;
 
             // 2.13.18
             //_skReply.OnReplyMessage += SkReply_OnReplyMessage;

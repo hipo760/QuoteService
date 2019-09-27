@@ -62,6 +62,11 @@ namespace SKAPI
             int nTimehms, int nTimemillismicros, int nBid, int nAsk, int nClose, int nQty, int nSimulate)
             => Task.Run(async () => await PublishAsync(sIndex, nDate, nTimehms, nTimemillismicros, nClose, nQty));
 
+        private void SKAPIConnection_OnNotifyHistoryTicksEvent(short sMarketNo, short sIndex, int nPtr, int nDate,
+            int nTimehms, int nTimemillismicros, int nBid, int nAsk, int nClose, int nQty, int nSimulate)
+            => Task.Run(async () => await PublishAsync(sIndex, nDate, nTimehms, nTimemillismicros, nClose, nQty));
+
+
         //Action<short, int, int, int, int, int, int> HistoryTickHandler =>
         //    async (sIndex, nDate, nTimehms, nTimemillismicros, nClose, nQty, nSimulate)
         //        => await Publish(sIndex, nDate, nTimehms, nTimemillismicros, nClose, nQty);
