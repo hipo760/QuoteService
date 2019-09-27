@@ -47,6 +47,7 @@ namespace QuoteService.FCMAPI
                     case ConnectionStatus.ConnectionReady:
                         break;
                     case ConnectionStatus.ConnectionError:
+                        apiConnection.Reconnect().Wait();
                         break;
                     default:
                         //throw new ArgumentOutOfRangeException();

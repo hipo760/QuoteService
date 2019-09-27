@@ -64,14 +64,6 @@ namespace SKAPI
         {
             _logger.Debug("[SKAPIConnection.ReleaseSKCOMObject()] Release...");
 
-            //OnConnectionEvent -= (kind, code) => ConnectionEventHandler(kind, code);
-            //OnNotifyTicksEvent
-            //    -= (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
-            //        => TickHandler(index, date, timehms, timemillismicros, close, qty, simulate);
-            //OnNotifyHistoryTicksEvent
-            //    -= (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
-            //        => TickHandler(index, date, timehms, timemillismicros, close, qty, simulate);
-
             OnConnectionEvent -= UpdateConnectionStatus;
             OnNotifyTicksEvent -= SKAPIConnection_OnNotifyTicksEvent;
             OnNotifyHistoryTicksEvent -= SKAPIConnection_OnNotifyHistoryTicksEvent;
@@ -99,15 +91,6 @@ namespace SKAPI
             _skReply = new SKReplyLib();
             _skQuotes = new SKQuoteLib();
 
-            //OnConnectionEvent += (kind, code) => ConnectionEventHandler(kind,code);
-            //OnNotifyTicksEvent
-            //    += (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
-            //        => TickHandler(index, date, timehms, timemillismicros, close, qty, simulate);
-            //OnNotifyHistoryTicksEvent
-            //    += (no, index, ptr, date, timehms, timemillismicros, bid, ask, close, qty, simulate)
-            //        => TickHandler(index, date, timehms, timemillismicros, close, qty, simulate);
-
-
             OnConnectionEvent += UpdateConnectionStatus;
             OnNotifyTicksEvent += SKAPIConnection_OnNotifyTicksEvent;
             OnNotifyHistoryTicksEvent += SKAPIConnection_OnNotifyHistoryTicksEvent;
@@ -115,9 +98,7 @@ namespace SKAPI
             // 2.13.18
             //_skReply.OnReplyMessage += SkReply_OnReplyMessage;
         }
-
         
-
         private void SkReply_OnReplyMessage(string bstrUserID, string bstrMessage, out short sConfirmCode)
         {
             _logger.Debug($"[SKAPIConnection.SkReply_OnReplyMessage()] {bstrUserID}, {bstrMessage}");
