@@ -71,7 +71,7 @@ namespace QuoteService
                 )));
         }
 
-        private IConfiguration LoadConfiguration() => new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true).Build();
+        public static IConfiguration LoadConfiguration() => new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true).Build();
 
         // Unknown methods.
         protected override INancyEnvironmentConfigurator GetEnvironmentConfigurator()

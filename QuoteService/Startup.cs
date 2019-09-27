@@ -21,13 +21,18 @@ namespace QuoteService
             return new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .Enrich.FromLogContext()
+                .Enrich.WithThreadId()
                 .WriteTo.Console(
                     LogEventLevel.Verbose,
-                    "{Timestamp:HH:mm:ss} [{Level}] ({CorrelationToken}) {Message}{NewLine}{Exception}")
-            //"{NewLine}{Timestamp:HH:mm:ss} [{Level}] ({CorrelationToken}) {Message}{NewLine}{Exception}")
+                    "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] ({ThreadId}) {Message}{NewLine}{Exception}")
+                .WriteTo.RollingFile(
+                    @"C:\QuoteService\bin\logs\QuoteService.log", 
+                    LogEventLevel.Verbose,
+                    "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] <{ThreadId}> {Message}{NewLine}{Exception}",
+                    retainedFileCountLimit:7
+                    )
                 .CreateLogger();
         }
-
     }
 
 }
