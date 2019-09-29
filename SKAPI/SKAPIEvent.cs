@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using QuoteService.FCMAPI;
+using QuoteService.GRPC;
 using QuoteService.QuoteData;
 using SKCOMLib;
 

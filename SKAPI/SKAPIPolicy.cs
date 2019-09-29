@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Polly;
 using QuoteService.FCMAPI;
+using QuoteService.GRPC;
 
 namespace SKAPI
 {

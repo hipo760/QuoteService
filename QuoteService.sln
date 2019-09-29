@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.Quote", "Quote
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.Queue", "QuoteService.Queue\QuoteService.Queue.csproj", "{B2FC3DE2-753B-4381-A9A5-A582607B7627}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.gRPC", "QuoteService.gRPC\QuoteService.gRPC.csproj", "{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{B2FC3DE2-753B-4381-A9A5-A582607B7627}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2FC3DE2-753B-4381-A9A5-A582607B7627}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2FC3DE2-753B-4381-A9A5-A582607B7627}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

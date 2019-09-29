@@ -10,6 +10,7 @@ using QuoteService.FCMAPI;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Configuration;
 using Polly;
+using QuoteService.GRPC;
 using QuoteService.Queue;
 using QuoteService.Quote;
 using QuoteService.QuoteData;

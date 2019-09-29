@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using QuoteService.GRPC;
 using QuoteService.QuoteData;
+
 
 namespace QuoteService.FCMAPI
 {
@@ -12,6 +14,7 @@ namespace QuoteService.FCMAPI
     {
         // Connection
         ConnectionStatus APIStatus { get;}
+
         Task<bool> Connect();
         Task<bool> Reconnect();
         Task Disconnect();

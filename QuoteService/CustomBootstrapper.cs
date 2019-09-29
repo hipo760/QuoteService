@@ -2,9 +2,11 @@
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using Nancy;
+using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Configuration;
 using QuoteService.FCMAPI;
+using QuoteService.gRPC;
 using QuoteService.Queue;
 using QuoteService.QuoteData;
 using Serilog;
@@ -16,7 +18,7 @@ namespace QuoteService
     public class CustomBootstrapper : AutofacNancyBootstrapper
     {
         protected ILogger _logger;
-
+      
         public CustomBootstrapper(ILogger logger)
         {
             _logger = logger;
@@ -69,6 +71,19 @@ namespace QuoteService
                 existingContainer.Resolve<ILogger>(),
                 existingContainer.Resolve<DataEventBroker<ConnectionStatusEvent>>()
                 )));
+
+            // Register gRPC
+            existingContainer.Configure<QuoteActionGRPCServerSetting>(existingContainer.Resolve<IConfiguration>().GetSection("QuoteActionGRPCServerSetting"));
+            existingContainer.Update(builder => builder.RegisterInstance(new QuoteActionServer(
+                existingContainer.Resolve<IFCMAPIConnection>(),
+                existingContainer.Resolve<QuoteActionGRPCServerSetting>(),
+                existingContainer.Resolve<ILogger>()
+                )));
+
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Start grpc...");
+            var grpc = existingContainer.Resolve<QuoteActionServer>();
+            grpc.Start();
+
         }
 
         public static IConfiguration LoadConfiguration() => new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true).Build();
