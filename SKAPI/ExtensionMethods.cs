@@ -2,6 +2,7 @@
 using System.IO;
 using Polly;
 using QuoteService.FCMAPI;
+using QuoteService.GRPC;
 using Serilog;
 
 namespace SKAPI

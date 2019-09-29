@@ -1,0 +1,47 @@
+syntax = "proto3";
+package QuoteService.gRPC;
+
+import "google/protobuf/empty.proto";
+
+enum ConnectionStatus{
+    Unknown = 0;
+    NotConnected = 1;
+    Connecting = 2;
+    ConnectionReady = 3;
+    ConnectionError = 4;
+}
+
+message TimeOfDay {
+    int32 Hour = 1;
+    int32 Minute = 2;
+    int32 Second = 3;
+}
+
+message QuoteRequest {
+    string Exchange = 1;
+    string Symbol = 2;
+    TimeOfDay StartTime = 3;
+    TimeOfDay EndTime = 4; 
+}
+
+message QuoteResponse {
+    int32 Result =1;
+}
+
+message QuoteServiceActionResponse {
+    int32 Result =1;
+}
+
+message ConnectionStatusResponse{
+    ConnectionStatus Status =1;
+}
+
+service QuoteService {
+    /* Subscribe and Unsubscribe Quote. */
+    rpc AddQuote (QuoteRequest) returns (QuoteResponse);
+    rpc RemoveQuote (QuoteRequest) returns (QuoteResponse);
+
+    /* Quote service connection action. */
+    rpc GetConnectionStatus (google.protobuf.Empty) returns (ConnectionStatusResponse);
+    rpc Reconnect (google.protobuf.Empty) returns (QuoteServiceActionResponse);
+}
