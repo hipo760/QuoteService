@@ -84,7 +84,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConnectionStatus.cs" />
+    <!-- <Compile Include="ConnectionStatus.cs" /> -->
     <Compile Include="HealthAction.cs" />
     <Compile Include="IFCMAPIConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
