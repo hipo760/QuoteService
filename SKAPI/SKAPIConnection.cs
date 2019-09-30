@@ -17,6 +17,7 @@ using QuoteService.QuoteData;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using SKCOMLib;
+using QuoteInfo = QuoteService.Quote.QuoteInfo;
 
 namespace SKAPI
 {

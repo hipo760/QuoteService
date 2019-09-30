@@ -25,6 +25,12 @@ namespace SKAPI
             add { _skQuotes.OnNotifyHistoryTicks += value; }
             remove { _skQuotes.OnNotifyHistoryTicks -= value; }
         }
+        public event _ISKQuoteLibEvents_OnNotifyServerTimeEventHandler OnNotifyServerTimeEvent
+        {
+            add { _skQuotes.OnNotifyServerTime += value; }
+            remove { _skQuotes.OnNotifyServerTime -= value; }
+        }
+
 
         private Action<int, int> ConnectionEventHandler => UpdateConnectionStatus;
 
