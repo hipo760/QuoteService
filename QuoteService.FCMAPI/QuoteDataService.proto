@@ -11,37 +11,41 @@ enum ConnectionStatus{
     ConnectionError = 4;
 }
 
-message TimeOfDay {
-    int32 Hour = 1;
-    int32 Minute = 2;
-    int32 Second = 3;
-}
-
-message QuoteRequest {
+message QuoteInfo {
     string Exchange = 1;
     string Symbol = 2;
-    TimeOfDay StartTime = 3;
-    TimeOfDay EndTime = 4; 
 }
 
 message QuoteResponse {
     int32 Result =1;
 }
 
-message QuoteServiceActionResponse {
-    int32 Result =1;
+message GetQuoteListResponse {
+	repeated QuoteInfo QuoteList =1;
+}
+
+message QuoteActionEmptyRequest{
 }
 
 message ConnectionStatusResponse{
     ConnectionStatus Status =1;
 }
 
-service QuoteService {
-    /* Subscribe and Unsubscribe Quote. */
-    rpc AddQuote (QuoteRequest) returns (QuoteResponse);
-    rpc RemoveQuote (QuoteRequest) returns (QuoteResponse);
+message ConnectionActionEmptyRequest{
+}
 
+message ConnectionActionResponse{
+	int32 Result =1;
+}
+
+service QuoteService {
+    
+	/* Subscribe and Unsubscribe Quote. */
+    rpc AddQuote (QuoteInfo) returns (QuoteResponse);
+    rpc RemoveQuote (QuoteInfo) returns (QuoteResponse);
+	rpc GetQuoteList(QuoteActionEmptyRequest)returns(GetQuoteListResponse);
+	
     /* Quote service connection action. */
-    rpc GetConnectionStatus (google.protobuf.Empty) returns (ConnectionStatusResponse);
-    rpc Reconnect (google.protobuf.Empty) returns (QuoteServiceActionResponse);
+    rpc GetConnectionStatus (ConnectionActionEmptyRequest) returns (ConnectionStatusResponse);
+    rpc Reconnect (ConnectionActionEmptyRequest) returns (ConnectionActionResponse);
 }

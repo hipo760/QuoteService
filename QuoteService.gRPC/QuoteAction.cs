@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using QuoteService.FCMAPI;
@@ -15,25 +16,46 @@ namespace QuoteService.gRPC
     public class QuoteAction: QuoteService.GRPC.QuoteService.QuoteServiceBase
     {
         private IFCMAPIConnection _conn;
-        public QuoteAction(IFCMAPIConnection conn)
+        private ILogger _log;
+        public QuoteAction(IFCMAPIConnection conn, ILogger logger)
         {
             _conn = conn;
         }
-        public override Task<QuoteResponse> AddQuote(QuoteRequest request, ServerCallContext context)
+        public override Task<QuoteResponse> AddQuote(QuoteInfo request, ServerCallContext context)
         {
             return Task<QuoteResponse>.Run(() => new QuoteResponse()
                 {Result = _conn.AddQuote(request.Exchange, request.Symbol).Result ? 0 : -1});
         }
 
-        public override Task<QuoteResponse> RemoveQuote(QuoteRequest request, ServerCallContext context)
+        public override Task<QuoteResponse> RemoveQuote(QuoteInfo request, ServerCallContext context)
         {
             return Task<QuoteResponse>.Run(() => new QuoteResponse()
                 {Result = _conn.RemoveQuote(request.Exchange, request.Symbol).Result ? 0 : -1});
         }
 
-        public override Task<QuoteServiceActionResponse> Reconnect(Empty request, ServerCallContext context)
+        public override Task<GetQuoteListResponse> GetQuoteList(QuoteActionEmptyRequest request, ServerCallContext context)
         {
-            return Task<QuoteServiceActionResponse>.Run(() => new QuoteServiceActionResponse()
+            return Task<GetQuoteListResponse>.Run(() =>
+            {
+                var quoteListResponse = new GetQuoteListResponse();
+                var list = _conn.QuotesList;
+                list.ForEach(x =>
+                {
+                    var quoteInfo = x.Split('.');
+                    quoteListResponse.QuoteList.Add(new QuoteInfo(){Exchange = quoteInfo[0],Symbol = quoteInfo[1]});
+                });
+                return quoteListResponse;
+            });
+        }
+
+        public override Task<ConnectionStatusResponse> GetConnectionStatus(ConnectionActionEmptyRequest request, ServerCallContext context)
+        {
+            return Task<ConnectionStatusResponse>.Run(() => new ConnectionStatusResponse() {Status = _conn.APIStatus});
+        }
+        
+        public override Task<ConnectionActionResponse> Reconnect(ConnectionActionEmptyRequest request, ServerCallContext context)
+        {
+            return Task<ConnectionActionResponse>.Run(() => new ConnectionActionResponse()
                 {Result = _conn.Reconnect().Result ? 0 : -1});
         }
     }
@@ -54,20 +76,12 @@ namespace QuoteService.gRPC
             _log = logger;
             _setting = setting;
             _log.Debug("[QuoteActionServer.ctor] Host on {Host}:{Port}",setting.Host,setting.Port);
-            //try
-            //{
-            //    _server = new Server();
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //    throw;
-            //}
+            
             _server = new Server()
             {
                 Services =
                 {
-                    QuoteService.GRPC.QuoteService.BindService(new QuoteAction(conn))
+                    QuoteService.GRPC.QuoteService.BindService(new QuoteAction(conn,logger))
                 },
                 Ports =
                 {

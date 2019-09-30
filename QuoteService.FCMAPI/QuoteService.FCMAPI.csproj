@@ -101,7 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <!--<None Include="app.config" />-->
-    <Protobuf Include="QuoteDataService.proto" />
+    <Protobuf Include="QuoteDataService.proto">
+      <Generator>MSBuild:Compile</Generator>
+    </Protobuf>
     <!--<None Include="packages.config" />-->
   </ItemGroup>
   <ItemGroup>
