@@ -10,8 +10,8 @@ stages:
 
 build_job:
   stage: build
-  only:
-    - master
+  except:
+    - develop
   script:
     - '& "$env:NUGET_PATH" restore'
     - '& "$env:MSBUILD_PATH" /p:Configuration=Release /clp:ErrorsOnly'
