@@ -1,3 +1,3 @@
 [submodule "QuoteService.QuoteData/protobuf/QuoteResearch-Proto"]
 	path = QuoteService.QuoteData/protobuf/QuoteResearch-Proto
-	url = ../../QuoteResearch-Proto.git
+	url = ../../hipo760/QuoteResearch-Proto.git
