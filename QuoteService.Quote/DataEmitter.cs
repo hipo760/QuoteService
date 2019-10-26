@@ -6,24 +6,27 @@ using System.Reactive.Subjects;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Configuration;
+using QuoteResearch.Service.Share.Data.Stream;
 using QuoteService.Queue;
 using QuoteService.Queue.RabbitMQ;
 using QuoteService.QuoteData;
 using Serilog;
+using QRType = QuoteResearch.Service.Share.Type;
 
 namespace QuoteService.Quote
 {
-    public class QuoteInfo
+    //public class QuoteInfo
+    //{
+    //    public string ApiSource { get; set; }
+    //    public string Exchange { get; set; }
+    //    public string Symbol { get; set; }
+    //}
+    public class DataEmitter : IDisposable
     {
-        public string ApiSource { get; set; }
-        public string Exchange { get; set; }
-        public string Symbol { get; set; }
-    }
-    public class Quote : IDisposable
-    {
-        public QuoteInfo QuoteInfo { get; set; }
+        public QRType.Quote QuoteInfo { get; set; }
 
         public string Name => QuoteInfo.Exchange + "." + QuoteInfo.Symbol;
         public TimeSpan OHLCInterval { get; set; } = TimeSpan.FromSeconds(1);
@@ -34,14 +37,14 @@ namespace QuoteService.Quote
         private ILogger _logger;
         private QueueConnectionClient _queueFanout;
 
-        public Quote(QuoteInfo quoteInfo,ILogger logger,IConfiguration config)//,GCPPubSubSetting setting)
+        public DataEmitter(QRType.Quote quoteInfo,ILogger logger,IConfiguration config)//,GCPPubSubSetting setting)
         {
             QuoteInfo = quoteInfo;
             _logger = logger;
-            _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...", QuoteInfo.Symbol);
+            _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout on RabbitMQ...", QuoteInfo.Symbol);
             _queueFanout  = new QueueConnectionClient(new RabbitQueueService(logger,config));
-            _queueFanout.FanoutConn.InitTopic(Name).Wait();
-            _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout of the GCP PubSub...done", QuoteInfo.Symbol);
+            _queueFanout.FanoutPublisher.InitTopic(Name).Wait();
+            _logger.Debug("[Quote.InitTickBroker()] {symbol} Create fanout on RabbitMQ...done", QuoteInfo.Symbol);
             InitTickBroker();
         }
 
@@ -58,7 +61,7 @@ namespace QuoteService.Quote
             state.Close = price;
             state.Volume += volume;
             state.TicksCount += 1;
-            state.TicksArr.Add(tick);
+            state.TicksArr.Add(new TickElement(){DealPrice = price,DealQty = volume});
             //state.LocalTime = Timestamp.FromDateTime(dt.ToUniversalTime());
             state.LocalTime = dt;
             return state;
@@ -68,10 +71,7 @@ namespace QuoteService.Quote
             return Task.Run(() =>
             {
                 LastOHLC = ohlc;
-                //LastOHLC.LogOHLC();
-                var ohlcstr = LastOHLC.SerializeToString_PB();
-                //Console.WriteLine(ohlcstr);
-                _queueFanout.FanoutConn.Send(ohlcstr);
+                _queueFanout.FanoutPublisher.Send(LastOHLC.ToByteArray());
                 //QueueConn?.Send(LastOHLC.SerializeToString_PB());
             });
         }
@@ -80,11 +80,6 @@ namespace QuoteService.Quote
         {
             _logger.Debug("[Quote.InitTickBroker()] {symbol}",QuoteInfo.Symbol);
             DataBroker = new DataEventBroker<Tick>();
-            //DataBroker
-            //    .WindowByTimestamp(x => x.LocalTime.ToDateTime().Ticks, OHLCInterval)
-            //    .SelectMany(window => window.Aggregate(new OHLC(),
-            //        (state, tick) => Accumulate(state, tick.DealPrice, tick.DealQty, tick.LocalTime.ToDateTime())))
-            //    .Subscribe(async ohlc => await Publish(ohlc));
             DataBroker
                 .WindowByTimestamp(x => x.LocalTime.ToDateTime().Ticks, OHLCInterval)
                 .SelectMany(window => window.Aggregate(new OHLC(),

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
+using QuoteResearch.Service.Share.Data.Stream;
 using QuoteService.FCMAPI;
-using QuoteService.GRPC;
 using QuoteService.QuoteData;
 using SKCOMLib;
 
@@ -10,28 +10,6 @@ namespace SKAPI
 {
     public partial class SKAPIConnection
     {
-        public event _ISKQuoteLibEvents_OnConnectionEventHandler OnConnectionEvent
-        {
-            add { _skQuotes.OnConnection += value; }
-            remove { _skQuotes.OnConnection -= value; }
-        }
-        public event _ISKQuoteLibEvents_OnNotifyTicksEventHandler OnNotifyTicksEvent
-        {
-            add { _skQuotes.OnNotifyTicks += value; }
-            remove { _skQuotes.OnNotifyTicks -= value; }
-        }
-        public event _ISKQuoteLibEvents_OnNotifyHistoryTicksEventHandler OnNotifyHistoryTicksEvent
-        {
-            add { _skQuotes.OnNotifyHistoryTicks += value; }
-            remove { _skQuotes.OnNotifyHistoryTicks -= value; }
-        }
-        public event _ISKQuoteLibEvents_OnNotifyServerTimeEventHandler OnNotifyServerTimeEvent
-        {
-            add { _skQuotes.OnNotifyServerTime += value; }
-            remove { _skQuotes.OnNotifyServerTime -= value; }
-        }
-
-
         private Action<int, int> ConnectionEventHandler => UpdateConnectionStatus;
 
 
@@ -57,7 +35,7 @@ namespace SKAPI
                     _skStatus = ConnectionStatus.Unknown;
                     break;
             }
-            _connStatusBroker.Publish(ConnectionStatusEvent.GetEvent(_skStatus, _skCenter.SKCenterLib_GetReturnCodeMessage(nkind)));
+            _connStatusBroker.Publish(ConnectionStatusEvent.GetEvent(_skStatus, _skapi.SKCenterLib_GetReturnCodeMessage(nkind)));
         }
 
 

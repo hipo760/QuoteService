@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Nancy;
+using QuoteResearch.Service.Share.Type;
 using QuoteService.FCMAPI;
 
 namespace QuoteService
@@ -32,14 +34,14 @@ namespace QuoteService
             Post("/Disconnect", _ => { return fcmAPI.Disconnect(); });
 
 
-            Get("/Quote", _ => String.Join(",", fcmAPI.QuotesList.ToArray()));
+            Get("/Quote", _ => String.Join(",", fcmAPI.QuotesList.Select(x=>x.Exchange+","+x.Symbol).ToArray()));
 
             Post("/Quote/{exchange}/{symbol}", parameters =>
             {
 
                 var exchange = (string) parameters.exchange;
                 var symbol = (string) parameters.symbol;
-                return fcmAPI.AddQuote(exchange, symbol).Result
+                return fcmAPI.AddQuote(new Quote(){Exchange = exchange,Symbol = symbol}).Result
                     ? HttpStatusCode.Accepted
                     : HttpStatusCode.BadRequest;
 
@@ -48,7 +50,7 @@ namespace QuoteService
             {
                 var exchange = (string) parameters.exchange;
                 var symbol = (string) parameters.symbol;
-                return fcmAPI.RemoveQuote(exchange, symbol).Result
+                return fcmAPI.RemoveQuote(new Quote() { Exchange = exchange, Symbol = symbol }).Result
                     ? HttpStatusCode.Accepted
                     : HttpStatusCode.BadRequest;
 

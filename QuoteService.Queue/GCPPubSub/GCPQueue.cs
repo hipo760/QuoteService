@@ -16,19 +16,19 @@ namespace QuoteService.Queue
             _logger = logger;
         }
 
-        public async Task<IQueueFanoutConnection> GetQueueFanoutConnection()
+        public async Task<IQueueFanoutPublisher> GetQueueFanoutPublisher()
         {
-            return await Task<IQueueFanoutConnection>.Run(() => new GCPFanout(_projectID,_logger));
+            return await Task<IQueueFanoutPublisher>.Run(() => new GCPFanout(_projectID,_logger));
         }
 
-        public async Task<IQueueRequestConnection> GetQueueRequestConnection()
-        {
-            throw new NotImplementedException();
-        }
+        //public async Task<IQueueRequestConnection> GetQueueRequestConnection()
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 
 
-    public class GCPFanout: IQueueFanoutConnection
+    public class GCPFanout: IQueueFanoutPublisher
     {
         private string _projectID;
         private string _topicID;
@@ -72,7 +72,7 @@ namespace QuoteService.Queue
             });
         }
 
-        public  async Task Send(string message)
+        public  async Task Send(byte[] message)
         {
             await Task.Run(() =>
             {

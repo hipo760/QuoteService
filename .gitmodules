@@ -1,0 +1,9 @@
+[submodule "pb/QuoteResearch-Proto"]
+	path = pb/QuoteResearch-Proto
+	url = https://github.com/hipo760/QuoteResearch-Proto.git
+[submodule "QuoteService.QuoteData/pb/QuoteResearch-Proto"]
+	path = QuoteService.QuoteData/pb/QuoteResearch-Proto
+	url = https://github.com/hipo760/QuoteResearch-Proto.git
+[submodule "QuoteService.QuoteData/protobuf/QuoteResearch-Proto"]
+	path = QuoteService.QuoteData/protobuf/QuoteResearch-Proto
+	url = https://github.com/hipo760/QuoteResearch-Proto.git

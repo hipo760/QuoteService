@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
-using QuoteService.GRPC;
+using System.Threading;
+using System.Threading.Tasks;
 using QuoteService.QuoteData;
 using Serilog;
 
@@ -27,12 +28,17 @@ namespace QuoteService.FCMAPI
     public class HealthAction
     {
         private DataEventBroker<ConnectionStatusEvent> _connStatusBroker;
+        private ILogger _log;
+        private IFCMAPIConnection _conn;
+
         private static readonly Object obj = new Object();
 
         public HealthAction(IFCMAPIConnection apiConnection, ILogger logger, DataEventBroker<ConnectionStatusEvent> connStatusBroker)
         {
             _connStatusBroker = connStatusBroker;
-            _connStatusBroker.Subscribe(x =>
+            _conn = apiConnection;
+            _log = logger;
+            _connStatusBroker.Subscribe(async x =>
             {
                 logger.Debug("[HealthAction()] {ConnectionStatus} : {Message}",
                     x.ConnectionStatus.ToString(),
@@ -41,14 +47,15 @@ namespace QuoteService.FCMAPI
                 switch (x.ConnectionStatus)
                 {
                     case ConnectionStatus.NotConnected:
-                        apiConnection.Reconnect().Wait();
+                        await apiConnection.Reconnect();
                         break;
                     case ConnectionStatus.Connecting:
+                        await CheckConnectingStatus();
                         break;
                     case ConnectionStatus.ConnectionReady:
                         break;
                     case ConnectionStatus.ConnectionError:
-                        apiConnection.Reconnect().Wait();
+                        await apiConnection.Reconnect();
                         break;
                     default:
                         //throw new ArgumentOutOfRangeException();
@@ -57,6 +64,20 @@ namespace QuoteService.FCMAPI
             });
             //apiConnection.Connect().Wait();
             _connStatusBroker.Publish(ConnectionStatusEvent.GetEvent(apiConnection.APIStatus, "Ready for Connect()."));
+        }
+
+        private Task CheckConnectingStatus()
+        {
+            return Task.Run(async () =>
+            {
+                _log.Debug("[HealthAction.CheckConnectingStatus()] Connecting, check connection status after 1 minute...");
+                Thread.Sleep(TimeSpan.FromMinutes(1));
+                if (_conn.APIStatus == ConnectionStatus.Connecting)
+                {
+                    _log.Debug("[HealthAction.CheckConnectingStatus()] Still connecting,  reconnect...");
+                    await _conn.Reconnect();
+                }
+            });
         }
     }
 }

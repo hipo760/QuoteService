@@ -10,77 +10,52 @@ using QuoteService.FCMAPI;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Configuration;
 using Polly;
-using QuoteService.GRPC;
+using QuoteResearch.Service.Share.Type;
 using QuoteService.Queue;
 using QuoteService.Quote;
 using QuoteService.QuoteData;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using SKCOMLib;
-using QuoteInfo = QuoteService.Quote.QuoteInfo;
+
 
 namespace SKAPI
 {
     public partial class SKAPIConnection : IFCMAPIConnection
     {
         protected ILogger _logger;
+        private SkapiWrapper _skapi;
         private DataEventBroker<ConnectionStatusEvent> _connStatusBroker;
         private IConfiguration _config;
 
         internal SKAPISetting _apiSetting;
         internal int _loginCode = -1;
-        protected Dictionary<short, (short pageNo, Quote quote)> _quoteDict;
+        protected Dictionary<short, (short pageNo, DataEmitter quote)> _quoteDict;
         protected ConnectionStatus _skStatus;
 
-        private SKCenterLib _skCenter;
-        private SKReplyLib _skReply;
-        private SKQuoteLib _skQuotes;
-
-        public SKAPIConnection(ILogger logger, DataEventBroker<ConnectionStatusEvent> connStatusBroker, IConfiguration config)
+        public SKAPIConnection(ILogger logger,SkapiWrapper skapi, DataEventBroker<ConnectionStatusEvent> connStatusBroker, IConfiguration config)
         {
             _logger = logger;
             _connStatusBroker = connStatusBroker;
             _config = config;
-            
             _apiSetting = new SKAPISetting();
-            config.GetSection("SKAPISetting").Bind(_apiSetting);
-            
+            config?.GetSection("SKAPISetting")?.Bind(_apiSetting);
             _logger.Debug("[SKAPIConnection()] Begin of constructor...");
-            _quoteDict = new Dictionary<short, (short pageNo, Quote quote)>();
+            _quoteDict = new Dictionary<short, (short pageNo, DataEmitter quote)>();
             _skStatus = ConnectionStatus.NotConnected;
-            InitSKCOMLib();
-        }
-
-
-        private short GetSKStockIdx(string symbol)
-        {
-            _logger.Debug("[SKAPIConnection.GetSKStockIdx()] {symbol}",  symbol);
-            SKSTOCK refStock = new SKSTOCK();
-            _logger.Debug("[SKAPIConnection.SKQuoteLib_GetStockByNo()] {symbol}", symbol);
-            var code = _skQuotes.SKQuoteLib_GetStockByNo(symbol, ref refStock);
-            _logger.Debug("[SKAPIConnection.SKQuoteLib_GetStockByNo()] {code}", code);
-            return (code == 0) ? refStock.sStockIdx : (short)-1;
+            _skapi = skapi;
+            SubscribeSkapiEvent();
         }
 
         private void ReleaseSKCOMObject()
         {
             _logger.Debug("[SKAPIConnection.ReleaseSKCOMObject()] Release...");
-
-            OnConnectionEvent -= UpdateConnectionStatus;
-            OnNotifyTicksEvent -= SKAPIConnection_OnNotifyTicksEvent;
-            OnNotifyHistoryTicksEvent -= SKAPIConnection_OnNotifyHistoryTicksEvent;
-
-            if (_skReply != null) Marshal.ReleaseComObject(_skReply);
-            // 2.13.18
-            //_skReply.OnReplyMessage -= SkReply_OnReplyMessage;
-            
-            _skQuotes.SKQuoteLib_LeaveMonitor();
+            _skapi.OnConnectionEvent -= UpdateConnectionStatus;
+            _skapi.OnNotifyTicksEvent -= SKAPIConnection_OnNotifyTicksEvent;
+            _skapi.OnNotifyHistoryTicksEvent -= SKAPIConnection_OnNotifyHistoryTicksEvent;
+            _skapi.SKQuoteLib_LeaveMonitor();
             Thread.Sleep(TimeSpan.FromMilliseconds(_apiSetting.SKServerLoadingTime));
-            
-
-            
-            if (_skQuotes != null) Marshal.ReleaseComObject(_skQuotes);
-            if (_skCenter != null) Marshal.ReleaseComObject(_skCenter);
+            _skapi.ReleaseSkcomLib();
             _logger.Debug("[SKAPIConnection.ReleaseSKCOMObject()] Clear.");
             _skStatus = ConnectionStatus.NotConnected;
         }
@@ -88,23 +63,15 @@ namespace SKAPI
         private void InitSKCOMLib()
         {
             _logger.Debug("[SKAPIConnection.InitSKCOMLib()] Init...");
-
-            _skCenter = new SKCenterLib();
-            _skReply = new SKReplyLib();
-            _skQuotes = new SKQuoteLib();
-
-            OnConnectionEvent += UpdateConnectionStatus;
-            OnNotifyTicksEvent += SKAPIConnection_OnNotifyTicksEvent;
-            OnNotifyHistoryTicksEvent += SKAPIConnection_OnNotifyHistoryTicksEvent;
-
-            // 2.13.18
-            //_skReply.OnReplyMessage += SkReply_OnReplyMessage;
+            _skapi.InitSkcomLib();
+            SubscribeSkapiEvent();
         }
-        
-        private void SkReply_OnReplyMessage(string bstrUserID, string bstrMessage, out short sConfirmCode)
+
+        public void SubscribeSkapiEvent()
         {
-            _logger.Debug($"[SKAPIConnection.SkReply_OnReplyMessage()] {bstrUserID}, {bstrMessage}");
-            sConfirmCode = -1;
+            _skapi.OnConnectionEvent += UpdateConnectionStatus;
+            _skapi.OnNotifyTicksEvent += SKAPIConnection_OnNotifyTicksEvent;
+            _skapi.OnNotifyHistoryTicksEvent += SKAPIConnection_OnNotifyHistoryTicksEvent;
         }
 
         public void Dispose()
@@ -116,8 +83,13 @@ namespace SKAPI
 
         #region Implementation of IFCMAPIConnection
 
-        public List<string> QuotesList => _quoteDict.Values.ToList().Select(t=>t.quote.Name).ToList();
+        public List<Quote> QuotesList => _quoteDict.Values.ToList().Select(t=>t.quote.QuoteInfo).ToList();
         public ConnectionStatus APIStatus => _skStatus;
+
+        public async Task InitAPI()
+        {
+            InitSKCOMLib();
+        }
 
         public async Task<bool> Connect()
             => await Task<bool>.Run(() =>
@@ -127,22 +99,19 @@ namespace SKAPI
                 //_logger.Debug($"[SKAPIConnection.ExecuteRetryLoginPolicy()] {_skCenter.SKCenterLib_GetReturnCodeMessage(_loginCode)}");
                 // Wait for reply message...
                 ExecuteRetryLoginPolicy(3);
-                int quoteServerCode = _skQuotes.SKQuoteLib_EnterMonitor();
+                int quoteServerCode = _skapi.SKQuoteLib_EnterMonitor();
                 if (quoteServerCode != 0) return false;
-                ExecuteWaitingConnectionReadyPolicy(5);
+                ExecuteRetryWaitingConnectionReadyPolicy(20);
                 return APIStatus == ConnectionStatus.ConnectionReady;
             });
 
         public Task<bool> Reconnect()
         {
-            //lock (obj)
-            //{
             return Task.Run(() =>
             {
                 _logger.Debug("[SKAPIConnection.Reconnect()] ReConnecting....");
                 // Save all quote.
-                var itemsToRescribe = _quoteDict
-                    .Select(x => (x.Value.quote.QuoteInfo.Exchange, x.Value.quote.QuoteInfo.Symbol)).ToArray();
+                var itemsToRescribe = _quoteDict.Select(x => (x.Value.quote.QuoteInfo)).ToArray();
                 RemoveAllQuotes().Wait();
                 ReleaseSKCOMObject();
                 InitSKCOMLib();
@@ -150,13 +119,11 @@ namespace SKAPI
                 if (!conn) return conn;
                 foreach (var item in itemsToRescribe)
                 {
-                    AddQuote(item.Exchange, item.Symbol).Wait();
+                    AddQuote(item).Wait();
                 }
                 return true;
             });
-            //}
         }
-
 
         public async Task Disconnect()
             => await Task.Run(() =>
@@ -167,38 +134,30 @@ namespace SKAPI
                 InitSKCOMLib();
             });
 
-        public async Task<bool> AddQuote(string exchange, string symbol)
+        public async Task<bool> AddQuote(Quote quote)
             => await Task<bool>.Run(() =>
             {
-                _logger.Debug("[SKAPIConnection.AddQuote()] {exchange},{symbol}",exchange,symbol);
+                _logger.Debug("[SKAPIConnection.AddQuote()] {exchange},{symbol}",quote.Exchange, quote.Symbol);
                 short skIdx;
                 try
                 {
-                    skIdx = GetSKStockIdx(symbol);
+                    skIdx = _skapi.GetSkStockIdxBySymbol(quote.Symbol);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                     throw;
                 }
-                
 
-                if (_quoteDict.Any(p => p.Value.quote.QuoteInfo.Symbol == symbol) || skIdx < 0) return false;
+                if (_quoteDict.Any(p => p.Value.quote.QuoteInfo.Symbol == quote.Symbol) || skIdx < 0) return false;
                 short pageNo = (short)(_quoteDict.Count);
-                _logger.Debug("[SKAPIConnection.AddQuoteRequest()] Add {symbol} to quote dict with key: {key}...",symbol,skIdx);
-                _quoteDict.Add(skIdx, 
-                    (pageNo,
-                    new Quote(
-                        new QuoteInfo() {ApiSource = "Capital", Exchange = exchange, Symbol = symbol},
-                        _logger,
-                        _config)
-                    )
-                );
+                _logger.Debug("[SKAPIConnection.AddQuoteRequest()] Add {symbol} to quote dict with key: {key}...",quote.Symbol,skIdx);
+                _quoteDict.Add(skIdx, (pageNo, new DataEmitter(quote, _logger, _config)));
 
-                switch (exchange)
+                switch (quote.Exchange)
                 {
                     case "TAIFEX":
-                        var addResult =  ExecuteRetryAddRequestTickPolicy(3, symbol, ref pageNo);
+                        var addResult =  ExecuteRetryAddRequestTickPolicy(3, quote.Symbol, ref pageNo);
                         _logger.Debug($"[SKAPIConnection.AddQuoteRequest()] SKQuoteLib_RequestTicks got page no: {pageNo}...");
                         if (!addResult)
                         {
@@ -220,17 +179,18 @@ namespace SKAPI
                 return true;
             });
 
-        public async Task<bool> RemoveQuote(string exchange, string symbol)
+        public async Task<bool> RemoveQuote(Quote quote)
             => await Task<bool>.Run(() =>
             {
                 int apiReturnCode = -1;
-                if (!CloseQuote(exchange, symbol).Result) return false;
-                var item = _quoteDict.FirstOrDefault(x => (x.Value.quote.QuoteInfo.Symbol == symbol && x.Value.quote.QuoteInfo.Exchange == exchange)).Key;
+                short pageNo = 50;
+                if (!CloseQuote(quote.Exchange, quote.Symbol).Result) return false;
+                var item = _quoteDict.FirstOrDefault(x => (x.Value.quote.QuoteInfo.Symbol == quote.Symbol && x.Value.quote.QuoteInfo.Exchange == quote.Exchange)).Key;
                 _quoteDict.Remove(item);
                 _logger.Debug("[SKAPIConnection.RemoveQuoteRequest()] SKQuoteLib_RequestTicks...");
-                if (exchange == "TAIFEX")
+                if (quote.Exchange == "TAIFEX")
                 {
-                    apiReturnCode = _skQuotes.SKQuoteLib_RequestTicks(50, symbol);
+                    apiReturnCode = _skapi.SKQuoteLib_RequestTicks(ref pageNo, quote.Symbol);
                 }
                 Thread.Sleep(_apiSetting.SKServerLoadingTime);
                 return (apiReturnCode == 0);
@@ -239,9 +199,10 @@ namespace SKAPI
         public async Task RemoveAllQuotes()
         => await Task.Run(() =>
         {
+            short pageNo = 50;
             foreach (var kv in _quoteDict)
             {
-                _skQuotes.SKQuoteLib_RequestTicks(50, kv.Value.quote.QuoteInfo.Symbol);
+                _skapi.SKQuoteLib_RequestTicks(ref pageNo, kv.Value.quote.QuoteInfo.Symbol);
                 kv.Value.quote.Dispose();
             }
             _quoteDict.Clear();

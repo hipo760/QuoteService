@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using QuoteService.GRPC;
 using QuoteService.QuoteData;
+using QRType = QuoteResearch.Service.Share.Type;
 
 
 namespace QuoteService.FCMAPI
 {
+    public enum ConnectionStatus
+    {
+        NotConnected,
+        Connecting,
+        ConnectionReady,
+        ConnectionError,
+        Unknown
+    }    
+    
     /// <summary>
     /// Futures Commission Merchant Quote API.
     /// </summary>
@@ -14,16 +23,15 @@ namespace QuoteService.FCMAPI
     {
         // Connection
         ConnectionStatus APIStatus { get;}
-
+        Task InitAPI();
         Task<bool> Connect();
         Task<bool> Reconnect();
         Task Disconnect();
 
         // Quote Action
-        List<string> QuotesList { get; }
-        Task<bool> AddQuote(string exchange, string symbol);
-        Task<bool> CloseQuote(string exchange, string symbol);
-        Task<bool> RemoveQuote(string exchange, string symbol);
+        List<QRType.Quote> QuotesList { get; }
+        Task<bool> AddQuote(QRType.Quote quote);
+        Task<bool> RemoveQuote(QRType.Quote quote);
         Task RemoveAllQuotes();
     }
 }
