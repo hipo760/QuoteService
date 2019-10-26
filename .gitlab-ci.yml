@@ -25,7 +25,7 @@ test_job:
   only:
     - merge_requests
   script:
-    -.\unit-test.ps1
+    - powershell -File unit-test.ps1
   dependencies:
     - build_job
 
