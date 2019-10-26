@@ -1,7 +1,7 @@
 variables:
   NUGET_PATH: 'C:\Tools\nuget.exe'
   MSBUILD_PATH: 'C:\MSBuildTools\MSBuild\Current\bin\msbuild.exe'
-
+  GIT_SUBMODULE_STRATEGY: recursive
   
 stages:
   - build
