@@ -13,6 +13,7 @@ stages:
 build_job:
   stage: build
   only:
+    - master
     - merge_requests
   script:
     - '& "$env:NUGET_PATH" restore'
@@ -27,6 +28,7 @@ build_job:
 test_job:
   stage: test
   only:
+    - master
     - merge_requests
   script:
     - '& 
