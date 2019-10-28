@@ -2,7 +2,7 @@ variables:
   NUGET_PATH: 'C:\Tools\nuget.exe'
   MSBUILD_PATH: 'C:\MSBuildTools\MSBuild\Current\bin\msbuild.exe'
   XUNIT_PATH: packages\xunit.runner.console.2.4.1\tools\net472
-  UNITTEST_FOLDER: '.\Tests
+  UNITTEST_FOLDER: '.\Tests'
   GIT_SUBMODULE_STRATEGY: recursive
   
 stages:
