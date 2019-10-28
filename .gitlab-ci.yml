@@ -2,6 +2,7 @@ variables:
   NUGET_PATH: 'C:\Tools\nuget.exe'
   MSBUILD_PATH: 'C:\MSBuildTools\MSBuild\Current\bin\msbuild.exe'
   XUNIT_PATH: packages\xunit.runner.console.2.4.1\tools\net472
+  UNITTEST_FOLDER: '.\Tests
   GIT_SUBMODULE_STRATEGY: recursive
   
 stages:
@@ -21,6 +22,7 @@ build_job:
     paths:
       - '.\QuoteService\bin\Release\'
       - '.\$env:XUNIT_PATH\*.*'
+      - '$env:UNITTEST_FOLDER'
 
 test_job:
   stage: test
@@ -29,8 +31,8 @@ test_job:
   script:
     - '& 
     "packages\xunit.runner.console.2.4.1\tools\net472\xunit.console.exe" 
-    ".\Tests\QuoteService.Schedule.Tests\bin\Release\QuoteService.Schedule.Tests.dll" 
-    ".\Tests\SKAPI.Tests\bin\Release\SKAPI.Tests.dll" 
+    "$env:UNITTEST_FOLDER\QuoteService.Schedule.Tests\bin\Release\QuoteService.Schedule.Tests.dll" 
+    "$env:UNITTEST_FOLDER\SKAPI.Tests\bin\Release\SKAPI.Tests.dll" 
     '
   dependencies:
     - build_job
