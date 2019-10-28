@@ -47,4 +47,5 @@ deploy_job:
     - 'gsutil cp gs://quote_vm_ci_cd/gitlab-cd.ps1 C:/QuoteService/'
     - 'powershell -noexit "& ""C:\QuoteService\gitlab-cd.ps1"""'
   dependencies:
+    - build_job
     - test_job
