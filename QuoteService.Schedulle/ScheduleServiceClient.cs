@@ -40,6 +40,7 @@ namespace QuoteService.Schedule
             _log = log;
             ScheduleClient = scheduleClient ?? throw new ArgumentNullException(nameof(scheduleClient));
             HealthClient = healthClient ?? throw new ArgumentNullException(nameof(healthClient));
+            ScheduleList = new List<QuoteSchedule>();
         }
 
         public void InitScheduleList()
@@ -81,8 +82,22 @@ namespace QuoteService.Schedule
             });
         }
 
-        public bool IsScheduleServiceOnline 
-            => (_healthClient.Check(new HealthCheckRequest(),new CallOptions()).Status == HealthCheckResponse.Types.ServingStatus.Serving);
+        public bool IsScheduleServiceOnline
+        {
+            get
+            {
+                try
+                {
+                    return (_healthClient.Check(new HealthCheckRequest(), new CallOptions()).Status ==
+                            HealthCheckResponse.Types.ServingStatus.Serving);
+                }
+                catch (Exception e)
+                {
+                    _log.Debug("[ScheduleServiceClientAction.IsScheduleServiceOnline]");
+                    return false;
+                }
+            }
+        }
 
         public bool IsLastSyncDate 
             => (_scheduleClient.GetScheduleUpdateTime(new EmptyRequest(), new CallOptions()) > LastUpdateTime);

@@ -34,19 +34,26 @@ namespace QuoteService.Schedule
         
         public QuoteServiceSchedule(IFCMAPIConnection conn, ILogger log, ScheduleServiceClientAction scheduleServiceClient, QueueConnectionClient queueFanout)
         {
+            
+            
             _conn = conn;
             _log = log;
             //_setting = setting;
             
-
+            _log.Debug("[QuoteServiceSchedule.ctor()]");
             // Initial the job server.
+            _log.Debug("[QuoteServiceSchedule.ctor()] Set memory storage.");
             GlobalConfiguration.Configuration.UseMemoryStorage();
+            _log.Debug("[QuoteServiceSchedule.ctor()] Set background job server.");
             _jobServer = new BackgroundJobServer(new BackgroundJobServerOptions() { WorkerCount = 1 });
-
             // Restore the schedule.
             _scheduleServiceClient =
                 scheduleServiceClient ?? throw new ArgumentNullException(nameof(scheduleServiceClient));
+            
+            _log.Debug("[QuoteServiceSchedule.ctor()] Restore the schedule...");
             RestoreSchedule();
+            _log.Debug("[QuoteServiceSchedule.ctor()] Restore the schedule...done.");
+
             // Listen to the UpdateSchedule event.    
             _scheduleFanout = queueFanout ?? throw new ArgumentNullException(nameof(scheduleServiceClient));
             //_scheduleFanout.FanoutReceiver.InitListening(_setting.ScheduleTopic).Wait();
@@ -77,7 +84,9 @@ namespace QuoteService.Schedule
 
         public void RestoreSchedule()
         {
+            _log.Debug("[QuoteServiceSchedule.RestoreSchedule()] Update schedule list...");
             _scheduleServiceClient.UpdateScheduleList();
+            _log.Debug("[QuoteServiceSchedule.RestoreSchedule()] Update schedule list...done.");
             _scheduleServiceClient.ScheduleList.ForEach(x => { AddQuoteSchedule(x); });
         }
 

@@ -168,8 +168,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GCPPubSub\GCPPubSubSetting.cs" />
-    <Compile Include="GCPPubSub\GCPQueue.cs" />
     <Compile Include="QueueFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RabbitMQ\RabbitFanout.cs" />

@@ -1,6 +1,7 @@
 variables:
   NUGET_PATH: 'C:\Tools\nuget.exe'
   MSBUILD_PATH: 'C:\MSBuildTools\MSBuild\Current\bin\msbuild.exe'
+  XUNIT_PATH: packages\xunit.runner.console.2.4.1\tools\net472
   GIT_SUBMODULE_STRATEGY: recursive
   
 stages:
@@ -19,13 +20,19 @@ build_job:
     expire_in: 2 days
     paths:
       - '.\QuoteService\bin\Release\'
+      - '$env:UNITTEST_FOLDER'
+      - '.\$env:XUNIT_PATH\*.*'
 
 test_job:
   stage: test
   only:
     - merge_requests
   script:
-    - powershell -File unit-test.ps1
+    - '& 
+    "$env:XUNIT_PATH\xunit.console.exe" 
+    "$env:Tests\QuoteService.Schedule.Tests\bin\Release\QuoteService.Schedule.Tests.dll" 
+    "$env:Tests\SKAPI.Tests\bin\Release\SKAPI.Tests.dll" 
+    '
   dependencies:
     - build_job
 

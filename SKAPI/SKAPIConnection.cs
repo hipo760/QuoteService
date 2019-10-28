@@ -101,7 +101,7 @@ namespace SKAPI
                 ExecuteRetryLoginPolicy(3);
                 int quoteServerCode = _skapi.SKQuoteLib_EnterMonitor();
                 if (quoteServerCode != 0) return false;
-                ExecuteRetryWaitingConnectionReadyPolicy(20);
+                ExecuteRetryWaitingConnectionReadyPolicy(5);
                 return APIStatus == ConnectionStatus.ConnectionReady;
             });
 

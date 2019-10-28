@@ -22,7 +22,7 @@ namespace QuoteService.Queue
     public interface IQueueService
     {
         Task<IQueueFanoutPublisher> GetQueueFanoutPublisher();
-        //Task<IQueueRequestConnection> GetQueueRequestConnection();
+        Task<IQueueFanoutReceiver> GetQueueFanoutReceiver();
     }
 
     public class QueueConnectionClient:IDisposable
@@ -53,6 +53,7 @@ namespace QuoteService.Queue
         public QueueConnectionClient(IQueueService queueService)
         {
             _fanoutPublisher = queueService.GetQueueFanoutPublisher().Result;
+            _fanoutReceiver = queueService.GetQueueFanoutReceiver().Result;
 
             //_requestConn = queueService.GetQueueRequestConnection().Result;
         }

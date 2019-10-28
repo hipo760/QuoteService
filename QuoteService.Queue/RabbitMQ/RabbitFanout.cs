@@ -22,6 +22,11 @@ namespace QuoteService.Queue.RabbitMQ
         {
             return await Task.Run(() => new RabbitFanoutPublisher(_logger,_setting));
         }
+
+        public async Task<IQueueFanoutReceiver> GetQueueFanoutReceiver()
+        {
+            return await Task.Run(() => new RabbitFanoutReceiver(_logger, _setting));
+        }
     }
 
     public class RabbitFanoutPublisher : IQueueFanoutPublisher
@@ -31,6 +36,7 @@ namespace QuoteService.Queue.RabbitMQ
         private RabbitPubSubSetting _setting;
         private ILogger _logger;
         private string _topicName;
+        private ConnectionFactory _factory;
 
         public RabbitFanoutPublisher(ILogger logger,RabbitPubSubSetting rabbitSetting)
         {
@@ -40,10 +46,7 @@ namespace QuoteService.Queue.RabbitMQ
             factory.UserName = _setting.UserName;
             factory.Password = _setting.Password;
             factory.HostName = _setting.HostName;
-            
-            _conn = factory.CreateConnection();
-            _channel = _conn.CreateModel();
-
+            _factory = factory;
         }
 
         public void Dispose()
@@ -55,6 +58,8 @@ namespace QuoteService.Queue.RabbitMQ
 
         public async Task InitTopic(string topicID)
         {
+            _conn = _factory.CreateConnection();
+            _channel = _conn.CreateModel();
             _topicName = topicID;
             await Task.Run(() => { _channel.ExchangeDeclare(topicID, "fanout"); });
         }
@@ -83,6 +88,7 @@ namespace QuoteService.Queue.RabbitMQ
         private ILogger _logger;
         private string _topicName;
         private EventingBasicConsumer _consumer;
+        private ConnectionFactory _factory;
 
         public RabbitFanoutReceiver(ILogger logger, RabbitPubSubSetting rabbitSetting)
         {
@@ -92,10 +98,7 @@ namespace QuoteService.Queue.RabbitMQ
             factory.UserName = _setting.UserName;
             factory.Password = _setting.Password;
             factory.HostName = _setting.HostName;
-
-            _conn = factory.CreateConnection();
-            _channel = _conn.CreateModel();
-
+            _factory = factory;
         }
 
         public void Dispose()
@@ -108,6 +111,17 @@ namespace QuoteService.Queue.RabbitMQ
 
         public async Task InitListening(string topicId)
         {
+            try
+            {
+                _conn = _factory.CreateConnection();
+                _channel = _conn.CreateModel();
+            }
+            catch (Exception e)
+            {
+                _logger.Debug("[RabbitFanoutReceiver.InitListening()] {topicId} Connection create exception",topicId);
+                //throw;
+                return;
+            }
             await Task.Run(() =>
             {
                 _topicName = topicId;

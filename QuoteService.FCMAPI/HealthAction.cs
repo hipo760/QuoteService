@@ -44,23 +44,28 @@ namespace QuoteService.FCMAPI
                     x.ConnectionStatus.ToString(),
                     x.Message
                 );
-                switch (x.ConnectionStatus)
+                await Task.Run(async () =>
                 {
-                    case ConnectionStatus.NotConnected:
-                        await apiConnection.Reconnect();
-                        break;
-                    case ConnectionStatus.Connecting:
-                        await CheckConnectingStatus();
-                        break;
-                    case ConnectionStatus.ConnectionReady:
-                        break;
-                    case ConnectionStatus.ConnectionError:
-                        await apiConnection.Reconnect();
-                        break;
-                    default:
-                        //throw new ArgumentOutOfRangeException();
-                        break;
-                }
+                    switch (x.ConnectionStatus)
+                    {
+                        case ConnectionStatus.NotConnected:
+                            await apiConnection.Reconnect();
+                            break;
+                        case ConnectionStatus.Connecting:
+                            //await CheckConnectingStatus();
+                            await CheckConnectingStatus();
+                            break;
+                        case ConnectionStatus.ConnectionReady:
+                            break;
+                        case ConnectionStatus.ConnectionError:
+                            await apiConnection.Reconnect();
+                            break;
+                        default:
+                            //throw new ArgumentOutOfRangeException();
+                            break;
+                    }
+
+                });
             });
             //apiConnection.Connect().Wait();
             _connStatusBroker.Publish(ConnectionStatusEvent.GetEvent(apiConnection.APIStatus, "Ready for Connect()."));
@@ -70,9 +75,10 @@ namespace QuoteService.FCMAPI
         {
             return Task.Run(async () =>
             {
-                _log.Debug("[HealthAction.CheckConnectingStatus()] Connecting, check connection status after 1 minute...");
-                Thread.Sleep(TimeSpan.FromMinutes(1));
-                if (_conn.APIStatus == ConnectionStatus.Connecting)
+                _log.Debug("[HealthAction.CheckConnectingStatus()] Connecting, check connection status after 30 seconds...");
+                Thread.Sleep(TimeSpan.FromSeconds(30));
+                _log.Debug("[HealthAction.CheckConnectingStatus()] {ConnectionStatus}...",_conn.APIStatus.ToString());
+                if (_conn.APIStatus != ConnectionStatus.ConnectionReady)
                 {
                     _log.Debug("[HealthAction.CheckConnectingStatus()] Still connecting,  reconnect...");
                     await _conn.Reconnect();

@@ -71,14 +71,18 @@ namespace QuoteService
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register Futures Commission Merchant (FCM) API ...done.");
 
             // Register HealthAction
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register HealthAction ...");
             existingContainer.Update(builder => builder.RegisterInstance(new HealthAction(
                 existingContainer.Resolve<IFCMAPIConnection>(),
                 existingContainer.Resolve<ILogger>(),
                 existingContainer.Resolve<DataEventBroker<ConnectionStatusEvent>>()
                 )));
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register HealthAction ...done.");
 
             // Register ScheduleQueue
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register ScheduleServiceClientAction ...");
             existingContainer.Configure<QuoteScheduleSetting>(existingContainer.Resolve<IConfiguration>().GetSection("QuoteScheduleSetting"));
+
             var quoteScheduleSetting = existingContainer.Resolve<QuoteScheduleSetting>();
 
             existingContainer.Update(b => b.RegisterInstance(new Channel(quoteScheduleSetting.ScheduleService, ChannelCredentials.Insecure)));
@@ -97,13 +101,16 @@ namespace QuoteService
             existingContainer.Resolve<ScheduleService.ScheduleServiceClient>(),
             existingContainer.Resolve<Health.HealthClient>()
                 )));
-            
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register ScheduleServiceClientAction ...done.");
+
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register QuoteScheduleQueue ...");
             existingContainer.Update(builder =>
                 builder.RegisterInstance(new QueueConnectionClient(
                     new RabbitQueueService(log, existingContainer.Resolve<IConfiguration>())
                     )));
             var queueConnectionClient = existingContainer.Resolve<QueueConnectionClient>();
             queueConnectionClient.FanoutReceiver.InitListening(quoteScheduleSetting.ScheduleTopic);
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Register QuoteScheduleQueue ...done.");
 
             existingContainer.Update(builder => builder.RegisterInstance(new QuoteServiceSchedule(
                 existingContainer.Resolve<IFCMAPIConnection>(),
@@ -124,7 +131,7 @@ namespace QuoteService
             log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: Start grpc...");
             var grpc = existingContainer.Resolve<GrpcServer>();
             grpc.Start();
-
+            log.Debug("[CustomBootstrapper.ConfigureApplicationContainer]: DI complete.");
         }
 
         public static IConfiguration LoadConfiguration() => new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true).Build();
