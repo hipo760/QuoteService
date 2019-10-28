@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitlab-ci.yml = .gitlab-ci.yml
 		gitlab-cd.ps1 = gitlab-cd.ps1
+		unit-test.ps1 = unit-test.ps1
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.FCMAPI", "QuoteService.FCMAPI\QuoteService.FCMAPI.csproj", "{C068B274-2F8E-450C-A075-AB629B51D6B1}"
@@ -22,6 +23,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.Queue", "QuoteService.Queue\QuoteService.Queue.csproj", "{B2FC3DE2-753B-4381-A9A5-A582607B7627}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.gRPC", "QuoteService.gRPC\QuoteService.gRPC.csproj", "{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.Schedule", "QuoteService.Schedulle\QuoteService.Schedule.csproj", "{9E2F0D77-6806-4D61-9325-B552E4C85776}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{51D91511-60F5-45E9-A97D-0034873D1F8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoteService.Schedule.Tests", "Tests\QuoteService.Schedule.Tests\QuoteService.Schedule.Tests.csproj", "{E2CFBDC5-4B15-4905-A987-469A70D97BB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SKAPI.Tests", "Tests\SKAPI.Tests\SKAPI.Tests.csproj", "{9E07CC1A-3437-45FE-ACC0-211BBF881A8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,9 +66,25 @@ Global
 		{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D85F8AB3-C0DA-40F6-9990-9ECEB9255C3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E2F0D77-6806-4D61-9325-B552E4C85776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E2F0D77-6806-4D61-9325-B552E4C85776}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E2F0D77-6806-4D61-9325-B552E4C85776}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E2F0D77-6806-4D61-9325-B552E4C85776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2CFBDC5-4B15-4905-A987-469A70D97BB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2CFBDC5-4B15-4905-A987-469A70D97BB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2CFBDC5-4B15-4905-A987-469A70D97BB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2CFBDC5-4B15-4905-A987-469A70D97BB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E07CC1A-3437-45FE-ACC0-211BBF881A8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E07CC1A-3437-45FE-ACC0-211BBF881A8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E07CC1A-3437-45FE-ACC0-211BBF881A8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E07CC1A-3437-45FE-ACC0-211BBF881A8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E2CFBDC5-4B15-4905-A987-469A70D97BB8} = {51D91511-60F5-45E9-A97D-0034873D1F8A}
+		{9E07CC1A-3437-45FE-ACC0-211BBF881A8A} = {51D91511-60F5-45E9-A97D-0034873D1F8A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2D07F927-2C76-4EE4-96DE-D84A20E8CF5A}

@@ -1,64 +1,136 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+//using Grpc.HealthCheck;
+using QuoteResearch.HealthCheck;
+using QuoteResearch.Service.CommandService;
+using QuoteResearch.Service.QuoteService;
+using QuoteResearch.Service.Share.Type;
 using QuoteService.FCMAPI;
-using QuoteService.GRPC;
+using QRService = QuoteResearch.Service;
 using Serilog;
 
 
 namespace QuoteService.gRPC
 {
-    public class QuoteAction: QuoteService.GRPC.QuoteService.QuoteServiceBase
+    public class QuoteServiceGrpc: QRService.QuoteService.QuoteService.QuoteServiceBase
     {
         private IFCMAPIConnection _conn;
         private ILogger _log;
-        public QuoteAction(IFCMAPIConnection conn, ILogger logger)
+        public QuoteServiceGrpc(IFCMAPIConnection conn, ILogger logger)
         {
             _conn = conn;
-        }
-        public override Task<QuoteResponse> AddQuote(QuoteInfo request, ServerCallContext context)
-        {
-            return Task<QuoteResponse>.Run(() => new QuoteResponse()
-                {Result = _conn.AddQuote(request.Exchange, request.Symbol).Result ? 0 : -1});
+            _log = logger;
         }
 
-        public override Task<QuoteResponse> RemoveQuote(QuoteInfo request, ServerCallContext context)
+        public override Task<GetQuoteListResponse> GetQuoteList(EmptyRequest request, ServerCallContext context)
         {
-            return Task<QuoteResponse>.Run(() => new QuoteResponse()
-                {Result = _conn.RemoveQuote(request.Exchange, request.Symbol).Result ? 0 : -1});
+            return Task.Run(() =>
+            { 
+                var response = new GetQuoteListResponse();
+                response.QuoteList.AddRange(_conn.QuotesList);
+                return response;
+            });
+        }
+    }
+
+    public class CommandServiceGrpc : CommandService.CommandServiceBase
+    {
+        private IFCMAPIConnection _conn;
+        private ILogger _log;
+        public CommandServiceGrpc(IFCMAPIConnection conn, ILogger logger)
+        {
+            _conn = conn;
+            _log = logger;
         }
 
-        public override Task<GetQuoteListResponse> GetQuoteList(QuoteActionEmptyRequest request, ServerCallContext context)
+
+        public override Task<CommandServiceResponse> Start(EmptyRequest request, ServerCallContext context)
         {
-            return Task<GetQuoteListResponse>.Run(() =>
+            return Task.Run(() =>
             {
-                var quoteListResponse = new GetQuoteListResponse();
-                var list = _conn.QuotesList;
-                list.ForEach(x =>
-                {
-                    var quoteInfo = x.Split('.');
-                    quoteListResponse.QuoteList.Add(new QuoteInfo(){Exchange = quoteInfo[0],Symbol = quoteInfo[1]});
-                });
-                return quoteListResponse;
+                var response = new CommandServiceResponse();
+                bool result = _conn.Reconnect().Result;
+                response.Result = result?0:-1;
+                return response;
             });
         }
 
-        public override Task<ConnectionStatusResponse> GetConnectionStatus(ConnectionActionEmptyRequest request, ServerCallContext context)
+        public override Task<CommandServiceResponse> Stop(EmptyRequest request, ServerCallContext context)
         {
-            return Task<ConnectionStatusResponse>.Run(() => new ConnectionStatusResponse() {Status = _conn.APIStatus});
+            return Task.Run(() =>
+            {
+                var response = new CommandServiceResponse();
+                _conn.Disconnect().Wait();
+                response.Result = 0;
+                return response;
+            });
         }
-        
-        public override Task<ConnectionActionResponse> Reconnect(ConnectionActionEmptyRequest request, ServerCallContext context)
+
+        public override Task<CommandServiceResponse> Restart(EmptyRequest request, ServerCallContext context)
         {
-            return Task<ConnectionActionResponse>.Run(() => new ConnectionActionResponse()
-                {Result = _conn.Reconnect().Result ? 0 : -1});
+            return Task.Run(() =>
+            {
+                var response = new CommandServiceResponse();
+                bool result = _conn.Reconnect().Result;
+                response.Result = result ? 0 : -1;
+                return response;
+            });
         }
     }
+
+    public class HealthCheckGrpc : Health.HealthBase
+    {
+        private IFCMAPIConnection _conn;
+        private ILogger _log;
+        public HealthCheckGrpc(IFCMAPIConnection conn, ILogger logger)
+        {
+            _conn = conn;
+            _log = logger;
+        }
+        public override async Task<HealthCheckResponse> Check(HealthCheckRequest request, ServerCallContext context)
+        {
+            //return base.Check(request, context);
+            var status = GetAPIServingStatus();
+            return new HealthCheckResponse() { Status = status };
+        }
+
+        private HealthCheckResponse.Types.ServingStatus GetAPIServingStatus()
+        {
+            HealthCheckResponse.Types.ServingStatus status;
+            switch (_conn.APIStatus)
+            {
+                case ConnectionStatus.NotConnected:
+                case ConnectionStatus.Connecting:
+                case ConnectionStatus.ConnectionError:
+                    status = HealthCheckResponse.Types.ServingStatus.NotServing;
+                    break;
+                case ConnectionStatus.ConnectionReady:
+                    status = HealthCheckResponse.Types.ServingStatus.Serving;
+                    break;
+                case ConnectionStatus.Unknown:
+                    status = HealthCheckResponse.Types.ServingStatus.Unknown;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return status;
+        }
+
+        public override async Task Watch(HealthCheckRequest request, IServerStreamWriter<HealthCheckResponse> responseStream, ServerCallContext context)
+        {
+            var status = GetAPIServingStatus();
+            var response = new HealthCheckResponse() {Status = status};
+            await responseStream.WriteAsync(response);
+        }
+    }
+
 
     public class QuoteActionGRPCServerSetting
     {
@@ -66,28 +138,38 @@ namespace QuoteService.gRPC
         public int Port { get; set; }
     }
 
-    public class QuoteActionServer
+    public class GrpcServer
     {
         private Server _server;
         private ILogger _log;
         private QuoteActionGRPCServerSetting _setting;
-        public QuoteActionServer(IFCMAPIConnection conn,QuoteActionGRPCServerSetting setting, ILogger logger)
+        public GrpcServer(IFCMAPIConnection conn,QuoteActionGRPCServerSetting setting, ILogger logger)
         {
             _log = logger;
             _setting = setting;
             _log.Debug("[QuoteActionServer.ctor] Host on {Host}:{Port}",setting.Host,setting.Port);
+
+
             
+
+
+
             _server = new Server()
             {
                 Services =
                 {
-                    QuoteService.GRPC.QuoteService.BindService(new QuoteAction(conn,logger))
+                    QRService.QuoteService.QuoteService.BindService(new QuoteServiceGrpc(conn,logger)),
+                    CommandService.BindService(new CommandServiceGrpc(conn,logger)),
+                    Health.BindService(new HealthCheckGrpc(conn,logger))
                 },
                 Ports =
                 {
                     new ServerPort(setting.Host,setting.Port,ServerCredentials.Insecure)
                 }
             };
+
+            //var healthImplementation = new HealthServiceImpl();
+
         }
         public void Start()
         {

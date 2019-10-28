@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Polly;
 using QuoteService.FCMAPI;
-using QuoteService.GRPC;
 
 namespace SKAPI
 {
@@ -14,20 +13,20 @@ namespace SKAPI
     {
         // Policy
 
-        private void ExecuteRetryLoginPolicy(int retry)
+        public void ExecuteRetryLoginPolicy(int retry)
         {
             var connStatusPolicy = Policy.HandleResult<int>(status => (status != 0 && status != 2003))
                 .WaitAndRetry(retry, retryAttempt => TimeSpan.FromSeconds(1));
             connStatusPolicy.Execute(() =>
             {
                 _logger.Debug("[SKAPIConnection.ExecuteRetryLoginPolicy()] Wait for reply message");
-                _loginCode = _skCenter.SKCenterLib_Login(_apiSetting.ID, _apiSetting.Password);
-                _logger.Debug($"[SKAPIConnection.ExecuteRetryLoginPolicy()] {_skCenter.SKCenterLib_GetReturnCodeMessage(_loginCode)}");
+                _loginCode = _skapi.SKCenterLib_Login(_apiSetting.ID, _apiSetting.Password);
+                _logger.Debug($"[SKAPIConnection.ExecuteRetryLoginPolicy()] {_skapi.SKCenterLib_GetReturnCodeMessage(_loginCode)}");
                 return _loginCode;
             });
         }
 
-        private bool ExecuteRetryAddRequestTickPolicy(int retry, string symbol, ref short pageNo)
+        public bool ExecuteRetryAddRequestTickPolicy(int retry, string symbol, ref short pageNo)
         {
             int apiReturnCode = -1;
             short tickPage = pageNo;
@@ -37,8 +36,8 @@ namespace SKAPI
             {
                 //tickPage += (short)1;
                 _logger.Debug($"[SKAPIConnection.ExecuteRetryAddRequestTickPolicy()] SKQuoteLib_RequestTicks...retry {retry} pageNo {tickPage}" );
-                apiReturnCode = _skQuotes.SKQuoteLib_RequestTicks(ref tickPage, symbol);
-                _logger.Debug($"[SKAPIConnection.ExecuteRetryAddRequestTickPolicy()] SKQuoteLib_RequestTicks {apiReturnCode}, {_skCenter.SKCenterLib_GetReturnCodeMessage(apiReturnCode)}...");
+                apiReturnCode = _skapi.SKQuoteLib_RequestTicks(ref tickPage, symbol);
+                _logger.Debug($"[SKAPIConnection.ExecuteRetryAddRequestTickPolicy()] SKQuoteLib_RequestTicks {apiReturnCode}, {_skapi.SKCenterLib_GetReturnCodeMessage(apiReturnCode)}...");
                 _logger.Debug($"[SKAPIConnection.ExecuteRetryAddRequestTickPolicy()] SKQuoteLib_RequestTicks got page no: {tickPage}...");
                 Thread.Sleep(_apiSetting.SKServerLoadingTime);
                 return tickPage;
@@ -48,7 +47,7 @@ namespace SKAPI
             return true;
         }
 
-        private bool ExecuteRetryRemoveRequestTickPolicy(int retry, string symbol)
+        public bool ExecuteRetryRemoveRequestTickPolicy(int retry, string symbol)
         {
             int apiReturnCode = -1;
             short tickPage = 50;
@@ -57,8 +56,8 @@ namespace SKAPI
             var returnPageNo = connStatusPolicy.Execute(() =>
             {
                 _logger.Debug($"[SKAPIConnection.ExecuteRetryRemoveRequestTickPolicy()] Use page 50 to cancel SKQuoteLib_RequestTicks");
-                apiReturnCode = _skQuotes.SKQuoteLib_RequestTicks(ref tickPage, symbol);
-                _logger.Debug($"[SKAPIConnection.ExecuteRetryRemoveRequestTickPolicy()] SKQuoteLib_RequestTicks {apiReturnCode}, {_skCenter.SKCenterLib_GetReturnCodeMessage(apiReturnCode)}...");
+                apiReturnCode = _skapi.SKQuoteLib_RequestTicks(ref tickPage, symbol);
+                _logger.Debug($"[SKAPIConnection.ExecuteRetryRemoveRequestTickPolicy()] SKQuoteLib_RequestTicks {apiReturnCode}, {_skapi.SKCenterLib_GetReturnCodeMessage(apiReturnCode)}...");
                 _logger.Debug($"[SKAPIConnection.ExecuteRetryRemoveRequestTickPolicy()] SKQuoteLib_RequestTicks got page no: {tickPage}...");
                 Thread.Sleep(_apiSetting.SKServerLoadingTime);
                 return tickPage;
@@ -67,7 +66,7 @@ namespace SKAPI
             return true;
         }
 
-        private void ExecuteWaitingConnectionReadyPolicy(int retry)
+        public void ExecuteRetryWaitingConnectionReadyPolicy(int retry)
         {
             var connStatusPolicy = Policy
                 .HandleResult<ConnectionStatus>(status => status != ConnectionStatus.ConnectionReady)

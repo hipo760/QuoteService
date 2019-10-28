@@ -1,15 +1,19 @@
 variables:
   NUGET_PATH: 'C:\Tools\nuget.exe'
   MSBUILD_PATH: 'C:\MSBuildTools\MSBuild\Current\bin\msbuild.exe'
+  XUNIT_PATH: packages\xunit.runner.console.2.4.1\tools\net472
+  UNITTEST_FOLDER: '.\Tests'
+  GIT_SUBMODULE_STRATEGY: recursive
   
 stages:
   - build
+  - test
   - deploy
 
 build_job:
   stage: build
   only:
-    - master
+    - merge_requests
   script:
     - '& "$env:NUGET_PATH" restore'
     - '& "$env:MSBUILD_PATH" /p:Configuration=Release /clp:ErrorsOnly'
@@ -17,6 +21,21 @@ build_job:
     expire_in: 2 days
     paths:
       - '.\QuoteService\bin\Release\'
+      - '.\$env:XUNIT_PATH\*.*'
+      - '$env:UNITTEST_FOLDER'
+
+test_job:
+  stage: test
+  only:
+    - merge_requests
+  script:
+    - '& 
+    "packages\xunit.runner.console.2.4.1\tools\net472\xunit.console.exe" 
+    "$env:UNITTEST_FOLDER\QuoteService.Schedule.Tests\bin\Release\QuoteService.Schedule.Tests.dll" 
+    "$env:UNITTEST_FOLDER\SKAPI.Tests\bin\Release\SKAPI.Tests.dll" 
+    '
+  dependencies:
+    - build_job
 
 deploy_job:
   stage: deploy
@@ -26,4 +45,4 @@ deploy_job:
     - 'gsutil cp gs://quote_vm_ci_cd/gitlab-cd.ps1 C:/QuoteService/'
     - 'powershell -noexit "& ""C:\QuoteService\gitlab-cd.ps1"""'
   dependencies:
-    - build_job
+    - test_job

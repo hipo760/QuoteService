@@ -3,50 +3,65 @@ using System.Threading.Tasks;
 
 namespace QuoteService.Queue
 {
-    public interface IQueueRequestConnection : IDisposable
-    {
-        //Task Send(string message);
-    }
-    public interface IQueueFanoutConnection : IDisposable
+    //public interface IQueueRequestConnection : IDisposable
+    //{
+    //    //Task Send(string message);
+    //}
+    public interface IQueueFanoutPublisher : IDisposable
     {
         Task InitTopic(string topicID);
-        Task Send(string message);
+        Task Send(byte[] message);
+    }
+
+    public interface IQueueFanoutReceiver : IDisposable
+    {
+        event EventHandler<byte[]> ReceivedMessageEvent;
+        Task InitListening(string topicID);
     }
 
     public interface IQueueService
     {
-        Task<IQueueFanoutConnection> GetQueueFanoutConnection();
-        //Task<IQueueRequestConnection> GetQueueRequestConnection();
+        Task<IQueueFanoutPublisher> GetQueueFanoutPublisher();
+        Task<IQueueFanoutReceiver> GetQueueFanoutReceiver();
     }
 
     public class QueueConnectionClient:IDisposable
     {
-        private IQueueFanoutConnection _fanoutConn;
+        private IQueueFanoutPublisher _fanoutPublisher;
+        private IQueueFanoutReceiver _fanoutReceiver;
 
-        public IQueueFanoutConnection FanoutConn
+        public IQueueFanoutReceiver FanoutReceiver
         {
-            get => _fanoutConn;
-            set => _fanoutConn = value;
+            get => _fanoutReceiver;
+            set => _fanoutReceiver = value;
         }
 
-        public IQueueRequestConnection RequestConn
+        public IQueueFanoutPublisher FanoutPublisher
         {
-            get => _requestConn;
-            set => _requestConn = value;
+            get => _fanoutPublisher;
+            set => _fanoutPublisher = value;
         }
 
-        private IQueueRequestConnection _requestConn;
+        //public IQueueRequestConnection RequestConn
+        //{
+        //    get => _requestConn;
+        //    set => _requestConn = value;
+        //}
+
+        //private IQueueRequestConnection _requestConn;
 
         public QueueConnectionClient(IQueueService queueService)
         {
-            _fanoutConn = queueService.GetQueueFanoutConnection().Result;
+            _fanoutPublisher = queueService.GetQueueFanoutPublisher().Result;
+            _fanoutReceiver = queueService.GetQueueFanoutReceiver().Result;
+
             //_requestConn = queueService.GetQueueRequestConnection().Result;
         }
 
         public void Dispose()
         {
-            _fanoutConn?.Dispose();
-            _requestConn?.Dispose();
+            _fanoutPublisher?.Dispose();
+            //_requestConn?.Dispose();
         }
     }
 }
